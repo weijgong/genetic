@@ -1,10 +1,4 @@
-/*
-	[TSPGA]
-	An Implementation of the Traveling Salesman Problem Solution in Three-dimensional space Using Genetic Algorithms.
-	[Author : Imad Hsissou]
-	[E-mail: imad.hsissou@gmail.com]
-	[https://github.com/7bisso]
-*/
+
 
 #include "tsp-ga.hh"
 #include <iostream>
@@ -20,8 +14,6 @@ using std::vector;
 void help();
 
 int main(int argc, char **argv) {
-
-
 	// Parsing Arguments
 
 	int populationSize, numGenerations,
@@ -30,6 +22,7 @@ int main(int argc, char **argv) {
 	int c;
 
 	while(1) {
+		// get each param of the genetic algorithm
 		static struct option long_options[] = {
 			{"population",	required_argument,	0,	'p'},
 			{"generation",	required_argument,	0,	'g'},
@@ -49,25 +42,25 @@ int main(int argc, char **argv) {
     	break;
 
     	switch(c)
-    		{
-    		case 'p':
-    			populationSize = atoi(optarg); break;
-    		case 'g':
-    			numGenerations = atoi(optarg); break;
-    		case 'k':
-    			keepPopulation = atoi(optarg); break;
-    		case 'm':
-    			numMutations = atoi(optarg); break;
-    		case 'h':
-    			help(); exit(0);
-    		default :
-    			abort ();
-    		}
-    	}
+		{
+			case 'p':
+				populationSize = atoi(optarg); break;
+			case 'g':
+				numGenerations = atoi(optarg); break;
+			case 'k':
+				keepPopulation = atoi(optarg); break;
+			case 'm':
+				numMutations = atoi(optarg); break;
+			case 'h':
+				help(); exit(0);
+			default :
+				abort ();
+		}
+	}
 
-    if(argc != 9) {
-    	help();
-    }
+	if(argc != 9) {
+		help();
+	}
 
 	// Setting Input
 
@@ -77,16 +70,13 @@ int main(int argc, char **argv) {
 	double inputX, inputY, inputZ;
 	vector<Point> pointsCluster;
 
-	// Points Input
-
+	// Points Input	
 	cin >> pointsNumber;
 
 	for(int i = 0; i < pointsNumber; i++) {
-
 		cin >> inputX >> inputY >> inputZ ;
 		Point inputPoint {inputX, inputY, inputZ};
-		pointsCluster.push_back(inputPoint);
-		 
+		pointsCluster.push_back(inputPoint);		 
 	}
 
 	// Run Genetic Algorithm

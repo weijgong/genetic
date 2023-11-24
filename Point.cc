@@ -1,3 +1,11 @@
+/*
+ * @Author: gongweijing 876887913@qq.com
+ * @Date: 2023-11-23 22:07:24
+ * @LastEditors: gongweijing 876887913@qq.com
+ * @LastEditTime: 2023-11-23 22:56:28
+ * @FilePath: /root/tsp-genetic-algorithm/Point.cc
+ * @Description: 
+ */
 #include "Point.hh"
 #include <cmath>
 
@@ -52,10 +60,10 @@ double Point::distanceTo(const Point& target) const {
   double z_target = target.getZ();
  
   double Pythagor = sqrt( 
-                          ((x_coord - x_target) * (x_coord - x_target)) + 
-	                        ((y_coord - y_target) * (y_coord - y_target)) + 
-			                    ((z_coord - z_target) * (z_coord - z_target))
-                          );
+                        ((x_coord - x_target) * (x_coord - x_target)) + 
+                        ((y_coord - y_target) * (y_coord - y_target)) + 
+                        ((z_coord - z_target) * (z_coord - z_target))
+                        );
 
   return Pythagor;
 }
