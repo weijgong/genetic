@@ -1,3 +1,13 @@
+/*
+ * @Author: gongweijing 876887913@qq.com
+ * @Date: 2023-11-25 09:39:53
+ * @LastEditors: gongweijing 876887913@qq.com
+ * @LastEditTime: 2023-11-25 15:32:29
+ * @FilePath: /gongweijing/nsga2/list.c
+ * @Description: list insert/Delete operate.
+ * 
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
+ */
 /* A custom doubly linked list implemenation */
 
 # include <stdio.h>
@@ -7,7 +17,12 @@
 # include "nsga2.h"
 # include "rand.h"
 
-/* Insert an element X into the list at location specified by NODE */
+/**
+ * @description: Insert the list node with index x after the node node
+ * @param {list} *node
+ * @param {int} x
+ * @return {*}
+ */
 void insert (list *node, int x)
 {
     list *temp;
