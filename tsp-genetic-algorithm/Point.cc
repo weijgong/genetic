@@ -2,8 +2,8 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-11-23 22:07:24
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-11-23 22:56:28
- * @FilePath: /root/tsp-genetic-algorithm/Point.cc
+ * @LastEditTime: 2023-11-24 14:36:14
+ * @FilePath: /gongweijing/genetic/Point.cc
  * @Description: 
  */
 #include "Point.hh"
@@ -53,6 +53,11 @@ double Point::getZ() const {
   return z_coord;
 } 
 
+/**
+ * @description: 3-D coordinate compute distance
+ * @param {Point&} target
+ * @return {*}
+ */
 double Point::distanceTo(const Point& target) const {
 
   double x_target = target.getX();

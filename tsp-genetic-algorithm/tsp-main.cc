@@ -35,8 +35,7 @@ int main(int argc, char **argv) {
 		/* getopt_long stores the option index here. */
 		int option_index = 0;
 
-		c = getopt_long (argc, argv, "p:g:k:m:h",
-                       long_options, &option_index);
+		c = getopt_long (argc, argv, "p:g:k:m:h",long_options, &option_index);
 		/* Detect the end of the options. */
     	if (c == -1)
     	break;
@@ -81,8 +80,7 @@ int main(int argc, char **argv) {
 
 	// Run Genetic Algorithm
 
-	TSPGenome goodGenome = findAShortPath(pointsCluster, populationSize,numGenerations,
-					keepPopulation, numMutations);
+	TSPGenome goodGenome = findAShortPath(pointsCluster, populationSize,numGenerations,keepPopulation, numMutations);
 	vector<int> GOrder = goodGenome.getOrder();
 	double GLength = goodGenome.getCircuitLength();
 
