@@ -48,6 +48,14 @@ void assign_crowding_distance_list (NSGA2Type *nsga2Params,  population *pop, li
 }
 
 /* Routine to compute crowding distance based on objective function values when the population in in the form of an array */
+/**
+ * @description: 当种群以数组形式存在时，基于目标函数值计算拥挤距离
+ * @param {NSGA2Type} *nsga2Params
+ * @param {population} *pop
+ * @param {int} c1
+ * @param {int} c2
+ * @return {*}
+ */
 void assign_crowding_distance_indices (NSGA2Type *nsga2Params, population *pop, int c1, int c2)
 {
     int **obj_array;

@@ -30,6 +30,7 @@ void fill_nondominated_sort (NSGA2Type *nsga2Params, population *mixed_pop, popu
     elite->parent = NULL;
     elite->child = NULL;
     temp1 = pool;
+    // 将所有的个体索引存入pool中
     for (i=0; i<2*nsga2Params->popsize; i++)
     {
         insert (temp1,i);
@@ -38,6 +39,7 @@ void fill_nondominated_sort (NSGA2Type *nsga2Params, population *mixed_pop, popu
     i=0;
     do
     {
+        // ========================== 遍历pool中所有的个体 ==========================
         temp1 = pool->child;
         insert (elite, temp1->index);
         front_size = 1;
@@ -45,18 +47,18 @@ void fill_nondominated_sort (NSGA2Type *nsga2Params, population *mixed_pop, popu
         temp1 = del (temp1);
         temp1 = temp1->child;
         do
-        {
+        {   
+            // 遍历其中的前沿集F_1
             temp2 = elite->child;
-            if (temp1==NULL)
-            {
-                break;
-            }
+            if (temp1==NULL)break;            
             do
             {
+                // ========================== 检测索引p与其余索引q之间的支配关系 ==========================
                 end = 0;
                 flag = check_dominance (nsga2Params, &(mixed_pop->ind[temp1->index]), &(mixed_pop->ind[temp2->index]));
                 if (flag == 1)
                 {
+                    // p支配q,说明q不属于支配前沿,放入S_p中,检测下一个支配前沿
                     insert (pool, temp2->index);
                     temp2 = del (temp2);
                     front_size--;
@@ -64,16 +66,19 @@ void fill_nondominated_sort (NSGA2Type *nsga2Params, population *mixed_pop, popu
                 }
                 if (flag == 0)
                 {
+                    // p与q互相不为支配解,检测下一个支配前沿
                     temp2 = temp2->child;
                 }
                 if (flag == -1)
                 {
+                    // p被q支配,找到了p的支配解,跳出循环
                     end = 1;
                 }
             }
             while (end!=1 && temp2!=NULL);
             if (flag == 0 || flag == 1)
             {
+                // 如果p支配所有的q或者成不支配的关系,将解p的索引放入精英集F_1中
                 insert (elite, temp1->index);
                 front_size++;
                 temp1 = del (temp1);
@@ -87,6 +92,7 @@ void fill_nondominated_sort (NSGA2Type *nsga2Params, population *mixed_pop, popu
         {
             do
             {
+                // ========================== 设定elite集中的各个元素rank=0 ==========================
                 copy_ind (nsga2Params, &mixed_pop->ind[temp2->index], &new_pop->ind[i]);
                 new_pop->ind[i].rank = rank;
                 archieve_size+=1;
@@ -115,6 +121,7 @@ void fill_nondominated_sort (NSGA2Type *nsga2Params, population *mixed_pop, popu
         while (elite->child !=NULL);
     }
     while (archieve_size < nsga2Params->popsize);
+    // ========================== 释放两个list的空间 ==========================
     while (pool!=NULL)
     {
         temp1 = pool;
