@@ -94,6 +94,7 @@ void assign_crowding_distance_indices (NSGA2Type *nsga2Params, population *pop, 
     return;
 }
 
+
 /* Routine to compute crowding distances */
 void assign_crowding_distance (NSGA2Type *nsga2Params, population *pop, int *dist, int **obj_array, int front_size)
 {
@@ -106,14 +107,17 @@ void assign_crowding_distance (NSGA2Type *nsga2Params, population *pop, int *dis
         }
         quicksort_front_obj (pop, i, obj_array[i], front_size);
     }
+    // ===================== 将各个解的拥挤距离初始化为0 =====================
     for (j=0; j<front_size; j++)
     {
         pop->ind[dist[j]].crowd_dist = 0.0;
     }
+    // ===================== 将两边的解的拥挤距离设定为无穷 =====================
     for (i=0; i<nsga2Params->nobj; i++)
     {
         pop->ind[obj_array[i][0]].crowd_dist = INF;
     }
+    // ===================== 计算中间部分解的拥挤距离值 =====================
     for (i=0; i<nsga2Params->nobj; i++)
     {
         for (j=1; j<front_size-1; j++)
@@ -126,11 +130,15 @@ void assign_crowding_distance (NSGA2Type *nsga2Params, population *pop, int *dis
                 }
                 else
                 {
-                    pop->ind[obj_array[i][j]].crowd_dist += (pop->ind[obj_array[i][j+1]].obj[i] - pop->ind[obj_array[i][j-1]].obj[i])/(pop->ind[obj_array[i][front_size-1]].obj[i] - pop->ind[obj_array[i][0]].obj[i]);
+                    // (T[i+1].obj - T[i-1].obj)/(f_max - f_min)
+                    pop->ind[obj_array[i][j]].crowd_dist += 
+                        (pop->ind[obj_array[i][j+1]].obj[i] - pop->ind[obj_array[i][j-1]].obj[i])
+                        /(pop->ind[obj_array[i][front_size-1]].obj[i] - pop->ind[obj_array[i][0]].obj[i]);
                 }
             }
         }
     }
+    // ===================== 计算拥挤距离的平均值 =====================
     for (j=0; j<front_size; j++)
     {
         if (pop->ind[dist[j]].crowd_dist != INF)
