@@ -1,91 +1,85 @@
+<!-- translated on 2023.11.27 -->
 This is the Readme file for NSGA-II code.
 
 
 About this version
 ==================
-Basically this version is a *Refactored* version of the original code in order to make the code structure more portable. Several changes have been made:
+基本上，这个版本是原始代码的“重构”版本，以使代码结构更具可移植性。已经做了一些改变:
+1. 已经定义了**NSGA2Type**类型来携带NSGA2算法所需的所有参数。这将减少_external_变量的数量，并减少在另一个例程中使用它时可能发生的冲突。
+2. 在**nsga2r.c**中，从main()函数中提取了三个函数。
+	1. readparameters:通过输入文件或命令行读取参数
+	2. InitNSGA2:初始化输出文件，分配内存，执行第一代
+	3. NSGA2:运行生成，保存结果并释放分配的内存。
+	4. PrintNSGA2Parameters:打印输入参数。
 
-1. The **NSGA2Type** type has been defined to carry all the necessary parameters of the NSGA2 algorithm. This will reduce the number of _external_ variables and reduce the possible conflict when it uses within another routine.
-2. Three function has been extracted from the main() function, previously in **nsga2r.c**. 
-	1. ReadParamters: Read the parameters through input file or command line
-	2. InitNSGA2: Initialize output files, allocate memory, and perform the first generation
-	3. NSGA2: Run the generation, save the results and free the allocated memory.
-	4. PrintNSGA2Parameters: Print the input parameters.
-3. Two extra void pointers have been provided and passed around to the function that has to call `evaluate` function. These are helpful when you want to integrate the algorithm to your code (e.g. simulator). Using `void *inp` and `void *out` pointer you could pass your simulator parameters around without changing the structure of NSGA2, as long as your objective function knows how to handle the `inp` and `out` to produce the objective values.
+3.提供了两个额外的void指针，并传递给必须调用`evaluate`函数的函数。当你想要将算法集成到你的代码(例如模拟器)时，这些是有用的。使用`void *inp`和`void *out`指针，你可以在不改变NSGA2结构的情况下传递模拟器参数，只要你的目标函数知道如何处理`inp` 和 `out`来产生目标值。
 
 About the Algorithm
 ===================
-NSGA-II: Non-dominated Sorting Genetic Algorithm - II
+NSGA-II:非支配排序遗传算法II (Non-dominated Sorting Genetic Algorithm - II)
 
-Please refer to the following paper for details about the algorithm:
-
-- Authors: Dr. Kalyanmoy Deb, Sameer Agrawal, Amrit Pratap, T Meyarivan
-- Paper Title: A Fast and Elitist multi-objective Genetic Algorithm: NSGA-II
-- Journal: IEEE Transactions on Evolutionary Computation (IEEE-TEC)
-- Year: 2002
-- Volume: 6
-- Number: 2
-- Pages: 182-197
-
+有关算法的详细内容，请参考以下文件:
+- 作者:Kalyanmoy Deb博士，Sameer Agrawal, Amrit Pratap, T Meyarivan
+- 论文题目:一种快速的精英多目标遗传算法:NSGA-II
+- 期刊:IEEE进化计算汇刊(IEEE- tec)
+- 年份:2002年
+- 容量:6
+- 数量:2
+- 页:182-197
 
 NOTE
 ====
-
-This archive contains routines for plotting the objective data real-time using gnuplot. The code has been written for posix compliant operating systems and uses sta
-ndard piping method provided by GNU C library. The routines should work on any unix and unix like OS having gnuplot installed and which are posix compliant.
-
+此存档包含使用gnuplot实时绘制客观数据的例程。该代码是为posix兼容的操作系统编写的，并使用GNU C库提供的标准管道方法。这些例程应该可以在任何安装了gnuplot并且兼容posix的unix和类似unix的操作系统上工作。
 
 
 How to compile and run the program
 ==================================
-Makefile has been provided for compiling the program on linux (and unix-like) systems. Edit the Makefile to suit your need. By default, provided Makefile attempts to compile and link all the existing source files into one single executable.
+Makefile提供了在linux(和类unix)系统上编译程序的功能。编辑Makefile以满足您的需要。默认情况下，提供Makefile尝试编译并将所有现有源文件链接到一个可执行文件中。
 
-Name of the executable produced is: nsga2r
+生成的可执行文件名称为:nsga2r
 
-To run the program type: `./nsga2r random_seed` or `./nsga2r random_seed < input_data/inp_file.in`
+要运行程序，输入: `./nsga2r random_seed` or `./nsga2r random_seed < input_data/inp_file.in`
 
-Here random_seed is a real number in (0,1) which is used as a seed for random number generator, and "inp_file.in" is the file that stores all the input parameters
+这里random_seed是(0,1)中的一个实数，它被用作随机数生成器的种子，而`inp_file.inp`是存储所有输入参数的文件
 
 
 About the output files
 ======================
-
 | File | Description |
 |:----------|:------------|
-| initial_pop.out | This file contains all the information about initial population. |
-| final_pop.out | This file contains the data of final population. |
-| all_pop.out | This file contains the data of populations at all generations. |
-| best_pop.out | This file contains the best solutions obtained at the end of simulation run. |
-| params.out | This file contains the information about input parameters as read by the program. |
-
+| initial_pop.out | 这个文件包含所有关于初始种群的信息。|
+| final_pop.out | 该文件包含最终种群的数据。|
+| all_pop.out | 该文件包含所有世代种群的数据。|
+| best_pop.out | 该文件包含模拟运行结束时获得的最佳解决方案。|
+| params.out | 该文件包含程序读取的有关输入参数的信息。|
 
 
 About the input parameters
 ==========================
-
 | Parameter | Description |
 |:----------|:------------|
-| popsize | This variable stores the population size (a multiple of 4) |
-| ngen | Number of generations |
-| nobj | Number of objectives |
-| ncon | Number of constraints |
-| nreal | Number of real variables |
-| min_realvar[i] | minimum value of i^{th} real variable |
-| max_realvar[i] | maximum value of i^{th} real variable |
-| pcross_real | probability of crossover of real variable |
-| pmut_real | probability of mutation of real variable |
-| eta_c | distribution index for real variable SBX crossover |
-| eta_m | distribution index for real variable polynomial mutation |
-| nbin | number of binary variables |
-| nbits[i] | number of bits for i^{th} binary variable |
-| min_binvar[i] | minimum value of i^{th} binary variable |
-| max_binvar[i] | maximum value of i^{th} binary variable |
-| pcross_bin | probability of crossover for binary variable |
-| pmut_bin | probability of mutation for binary variable |
-| choice | option to display the data realtime using gnuplot |
-| obj1, obj2, obj3 | index of objectives to be shown on x, y and z axes respectively |
-| angle1, angle2 | polar and azimuthal angle required for location of eye |
+| popsize |该变量存储总体大小(4的倍数)|
+| n | 世代数 |
+| nobj |目标数|
+| ncon |约束数|
+| nreal |实变量数|
+| min_realvar[i] | $i^{th}$实变量的最小值|
+| max_realvar[i] | $i^{th}$实变量的最大值|
+| pcross_real | 实变量交叉的概率 |
+| pmut_real | 实数变量的变异概率 |
+| eta_c | 实变量SBX交叉的分布指标 |
+| eta_m | 实数变量多项式突变的分布指标 |
+| nbin |二进制变量数|
+| nbits[i] | $i^{th}$二进制变量的位数|
+| min_binvar[i] | $i^{th}$二进制变量的最小值|
+| max_binvar[i] |第 $i^{th}$个二进制变量的最大值|
+| pcross_bin |二元变量交叉概率
+| pmut_bin |二进制变量的变异概率|
+| choice | 选项显示数据实时使用gnuplot |
+| obj1、obj2、obj3 |分别显示在x、y、z轴上的物镜索引|
+| angle1, angle2 |眼睛定位所需的极角和方位角|
 
+ 
 
 
 定义测试问题
