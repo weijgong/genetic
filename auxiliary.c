@@ -1,3 +1,13 @@
+/*
+ * @Author: gongweijing 876887913@qq.com
+ * @Date: 2023-11-25 09:39:53
+ * @LastEditors: gongweijing 876887913@qq.com
+ * @LastEditTime: 2023-11-26 09:45:43
+ * @FilePath: /gongweijing/nsga2/auxiliary.c
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
+ */
 /* Some utility functions (not part of the algorithm) */
 
 # include <stdio.h>
