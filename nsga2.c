@@ -13,7 +13,14 @@ population *parent_pop;
 population *child_pop;
 population *mixed_pop;
 
-
+/**
+ * @description: 输出参数依次为：种群数、世代数、目标函数个数、约束条件个数、实变量个数、实变量上下界*实变量个数、实变量交叉概率、
+ *               实变量变异概率、实变量交叉分配指标、实变量变异分配指标、二进制变量个数、二进制变量上下界*二进制变量个数、二进制变量交叉概率、
+ *               二进制变量变异概率、是否要展示
+ * @param {int} argc
+ * @param {char} *
+ * @return {*}
+ */
 NSGA2Type ReadParameters(int argc, char **argv){
     int i;
     NSGA2Type nsga2Params;
@@ -31,6 +38,7 @@ NSGA2Type ReadParameters(int argc, char **argv){
     }
     printf("\n Enter the problem relevant and algorithm relevant parameters ... ");
     printf("\n Enter the population size (a multiple of 4) : ");
+    // 变量存取总的存储大小
     scanf("%d",&nsga2Params.popsize);
     if (nsga2Params.popsize<4 || (nsga2Params.popsize%4)!= 0)
     {
@@ -39,6 +47,7 @@ NSGA2Type ReadParameters(int argc, char **argv){
         exit (1);
     }
     printf("\n Enter the number of generations : ");
+    // 世代数
     scanf("%d",&nsga2Params.ngen);
     if (nsga2Params.ngen<1)
     {
@@ -47,6 +56,7 @@ NSGA2Type ReadParameters(int argc, char **argv){
         exit (1);
     }
     printf("\n Enter the number of objectives : ");
+    // 目标函数个数
     scanf("%d",&nsga2Params.nobj);
     if (nsga2Params.nobj<1)
     {
@@ -55,6 +65,7 @@ NSGA2Type ReadParameters(int argc, char **argv){
         exit (1);
     }
     printf("\n Enter the number of constraints : ");
+    // 约束条件个数
     scanf("%d",&nsga2Params.ncon);
     if (nsga2Params.ncon<0)
     {
@@ -63,6 +74,7 @@ NSGA2Type ReadParameters(int argc, char **argv){
         exit (1);
     }
     printf("\n Enter the number of real variables : ");
+    // 实数变量个数
     scanf("%d",&nsga2Params.nreal);
     if (nsga2Params.nreal<0)
     {
@@ -77,8 +89,10 @@ NSGA2Type ReadParameters(int argc, char **argv){
         for (i=0; i<nsga2Params.nreal; i++)
         {
             printf ("\n Enter the lower limit of real variable %d : ",i+1);
+            // 实数变量x_i的最小值
             scanf ("%lf",&nsga2Params.min_realvar[i]);
             printf ("\n Enter the upper limit of real variable %d : ",i+1);
+            // 实数变量x_i的最大值
             scanf ("%lf",&nsga2Params.max_realvar[i]);
             if (nsga2Params.max_realvar[i] <= nsga2Params.min_realvar[i])
             {
@@ -87,6 +101,7 @@ NSGA2Type ReadParameters(int argc, char **argv){
             }
         }
         printf ("\n Enter the probability of crossover of real variable (0.6-1.0) : ");
+        // 实数变量交叉的概率
         scanf ("%lf",&nsga2Params.pcross_real);
         if (nsga2Params.pcross_real<0.0 || nsga2Params.pcross_real>1.0)
         {
@@ -95,6 +110,7 @@ NSGA2Type ReadParameters(int argc, char **argv){
             exit (1);
         }
         printf ("\n Enter the probablity of mutation of real variables (1/nsga2Params.nreal) : ");
+        // 实数变量变异的概率
         scanf ("%lf",&nsga2Params.pmut_real);
         if (nsga2Params.pmut_real<0.0 || nsga2Params.pmut_real>1.0)
         {
@@ -103,6 +119,7 @@ NSGA2Type ReadParameters(int argc, char **argv){
             exit (1);
         }
         printf ("\n Enter the value of distribution index for crossover (5-20): ");
+        // 实数变量的多项式交叉分布指标
         scanf ("%lf",&nsga2Params.eta_c);
         if (nsga2Params.eta_c<=0)
         {
@@ -111,6 +128,7 @@ NSGA2Type ReadParameters(int argc, char **argv){
             exit (1);
         }
         printf ("\n Enter the value of distribution index for mutation (5-50): ");
+        // 实数变量的多项式变异分布指标
         scanf ("%lf",&nsga2Params.eta_m);
         if (nsga2Params.eta_m<=0)
         {
@@ -120,6 +138,7 @@ NSGA2Type ReadParameters(int argc, char **argv){
         }
     }
     printf("\n Enter the number of binary variables : ");
+    // 二进制变量的个数
     scanf("%d",&nsga2Params.nbin);
     if (nsga2Params.nbin<0)
     {

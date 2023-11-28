@@ -7,7 +7,7 @@
 # include "nsga2.h"
 # include "rand.h"
 
-
+// E. Zitzler, K. Deb, L. Thiele, C. A. C. Coello, and D. Corne, editors. Evolutionary Multi-Criterion Optimization (Lecture Notes in Computer Science 1993). Heidelberg: Springer, 2001
 
 /* # define sch1 */
 /* # define sch2 */
@@ -15,7 +15,7 @@
 /* # define kur */
 /* # define pol */
 /* # define vnt */
-/* # define zdt1 */
+# define zdt1
 /* # define zdt2 */
 /* # define zdt3 */
 /* # define zdt4 */
@@ -25,7 +25,7 @@
 /* # define osy */
 /* # define srn */
 /* # define tnk */
- # define ctp1 
+// # define ctp1 
 /* # define ctp2 */
 /* # define ctp3 */
 /* # define ctp4 */
@@ -461,10 +461,30 @@ void test_problem (double *xreal, double *xbin, int **gene, double *obj, double 
     # of objectives = 2
     # of constraints = 2
     */
-
+/**
+ * @description: 配置规划问题的框架
+ * @param: double *xreal 实数变量的x的数组,xreal[0]表示xr_0
+ * @param: double *xbin 二进制变量的x的数组,xbin[0]表示xb_0
+ * @param: int **gene 如果计算问题中涉及到了直接对基因组进行目标函数计算,调用该数组
+ * @param: double *obj 存放并传送目标函数数组
+ * @param: double *constr 存放并传送限制条件数组
+ * @return {*} None，指针传参
+ */
 #ifdef ctp1
 void test_problem (double *xreal, double *xbin, int **gene, double *obj, double *constr)
 {
+/*
+obj:\\
+\begin{cases}
+obj_1=x_0\\
+obj_2=(1+x_1)*exp(\frac{-obj_1}{1+x_1})
+\end{cases}
+c.t.\\
+\begin{cases}
+cons_1 = \frac{obj_2}{0.858\times exp(-0.541\times obj_1)}-1 \\
+cons_1 = \frac{obj_2}{0.728\times exp(-0.295\times obj_1)}-1
+\end{cases}
+*/
     double g;
     g = 1.0 + xreal[1];
     obj[0] = xreal[0];
