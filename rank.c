@@ -80,6 +80,7 @@ void assign_rank_and_crowding_distance (NSGA2Type *nsga2Params, population *new_
             temp1 = temp1->child;
         }
         while (temp1 != NULL);
+        // 将非支配解的rank均设定为1.
         temp2 = cur->child;
         do
         {
@@ -87,6 +88,7 @@ void assign_rank_and_crowding_distance (NSGA2Type *nsga2Params, population *new_
             temp2 = temp2->child;
         }
         while (temp2 != NULL);
+        // 
         assign_crowding_distance_list (nsga2Params, new_pop, cur->child, front_size);
         temp2 = cur->child;
         do
