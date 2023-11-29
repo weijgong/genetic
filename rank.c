@@ -95,7 +95,7 @@ void assign_rank_and_crowding_distance (NSGA2Type *nsga2Params, population *new_
             temp2 = temp2->child;
         }
         while (temp2 != NULL);
-        // 
+        // 计算pop->ind[dist[j]].crowd_dist并对其进行赋值、排序
         assign_crowding_distance_list (nsga2Params, new_pop, cur->child, front_size);
         temp2 = cur->child;
         do

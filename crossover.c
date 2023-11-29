@@ -98,6 +98,8 @@ void realcross (NSGA2Type *nsga2Params,  individual *parent1, individual *parent
                     child2->xreal[i] = parent2->xreal[i];
                 }
             }
+            
+            
             else
             {
                 child1->xreal[i] = parent1->xreal[i];

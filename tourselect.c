@@ -1,3 +1,13 @@
+/*
+ * @Author: gongweijing 876887913@qq.com
+ * @Date: 2023-11-25 09:39:53
+ * @LastEditors: gongweijing 876887913@qq.com
+ * @LastEditTime: 2023-11-29 10:43:32
+ * @FilePath: /gongweijing/nsga2/tourselect.c
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
+ */
 /* Tournamenet Selections routines */
 
 # include <stdio.h>
@@ -7,7 +17,13 @@
 # include "nsga2.h"
 # include "rand.h"
 
-/* Routine for tournament selection, it creates a new_pop from old_pop by performing tournament selection and the crossover */
+/**
+ * @description: 用于锦标赛选择的例程，它通过执行锦标赛选择和交叉，从old_pop创建new_pop。
+ * @param {NSGA2Type} *nsga2Params
+ * @param {population} *old_pop
+ * @param {population} *new_pop
+ * @return {*}
+ */
 void selection (NSGA2Type *nsga2Params,  population *old_pop, population *new_pop)
 {
     int *a1, *a2;
@@ -21,6 +37,7 @@ void selection (NSGA2Type *nsga2Params,  population *old_pop, population *new_po
     {
         a1[i] = a2[i] = i;
     }
+    // 将数组索引进行随机打乱,便于后续进行随机tournament comparision.
     for (i=0; i<nsga2Params->popsize; i++)
     {
         rand = rnd (i, nsga2Params->popsize-1);
@@ -32,6 +49,7 @@ void selection (NSGA2Type *nsga2Params,  population *old_pop, population *new_po
         a2[rand] = a2[i];
         a2[i] = temp;
     }
+    // 相邻两个个体比较，选出其中更优的一个进行交叉,每次生成4个新个体
     for (i=0; i<nsga2Params->popsize; i+=4)
     {
         parent1 = tournament (nsga2Params, &old_pop->ind[a1[i]], &old_pop->ind[a1[i+1]]);

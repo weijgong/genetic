@@ -1,3 +1,13 @@
+/*
+ * @Author: gongweijing 876887913@qq.com
+ * @Date: 2023-11-25 09:39:53
+ * @LastEditors: gongweijing 876887913@qq.com
+ * @LastEditTime: 2023-11-29 09:42:54
+ * @FilePath: /gongweijing/nsga2/report.c
+ * @Description:   
+ * 
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
+ */
 /* Routines for storing population data into files */
 
 # include <stdio.h>
@@ -7,7 +17,13 @@
 # include "nsga2.h"
 # include "rand.h"
 
-/* Function to print the information of a population in a file */
+/**
+ * @description: 依次将目标函数数值、约束条件数值、实数变量值、二进制变量值、约束冲突、解的等级、拥挤距离存入.out文件
+ * @param {NSGA2Type} *nsga2Params
+ * @param {population} *pop
+ * @param {FILE} *fpt
+ * @return {*}
+ */
 void report_pop (NSGA2Type *nsga2Params,  population *pop, FILE *fpt)
 {
     int i, j, k;
@@ -48,7 +64,13 @@ void report_pop (NSGA2Type *nsga2Params,  population *pop, FILE *fpt)
     return;
 }
 
-/* Function to print the information of feasible and non-dominated population in a file */
+/**
+ * @description: 输出所有的可行解,可行解的定义为：pop->ind[i].constr_violation == 0.0 && pop->ind[i].rank==1
+ * @param {NSGA2Type} *nsga2Params
+ * @param {population} *pop
+ * @param {FILE} *fpt
+ * @return {*}
+ */
 void report_feasible (NSGA2Type *nsga2Params,  population *pop, FILE *fpt)
 {
     int i, j, k;

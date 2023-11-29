@@ -395,19 +395,23 @@ void InitNSGA2(NSGA2Type *nsga2Params, void *inp, void *out)
 }
 
 
-
-
 int NSGA2(NSGA2Type *nsga2Params, void *inp, void *out)
 {
     int i;
     
     for (i=2; i<=nsga2Params->ngen; i++)
     {
+        // 选择并交叉形成nsga2Params->popsize个个体的child_pop
         selection (nsga2Params,  parent_pop, child_pop);
+        // 对子代种群进行变异操作
         mutation_pop (nsga2Params,  child_pop);
+        // 将二进制变量进行解码,gene[i][j]->nbits[i]
         decode_pop(nsga2Params,  child_pop);
+        // 计算子代种群的约束冲突
         evaluate_pop(nsga2Params,  child_pop, inp, out);
+        // 将parent_pop与child_pop均放入mixed_pop中
         merge (nsga2Params,  parent_pop, child_pop, mixed_pop);
+        // 对非支配解进行生成，即将其中的elite集合作为下一次迭代开始的时候的parent_pop
         fill_nondominated_sort (nsga2Params,  mixed_pop, parent_pop);
         /* Comment following four lines if information for all
          generations is not desired, it will speed up the execution */
