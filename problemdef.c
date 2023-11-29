@@ -7,7 +7,8 @@
 # include "nsga2.h"
 # include "rand.h"
 
-// E. Zitzler, K. Deb, L. Thiele, C. A. C. Coello, and D. Corne, editors. Evolutionary Multi-Criterion Optimization (Lecture Notes in Computer Science 1993). Heidelberg: Springer, 2001
+// E. Zitzler, K. Deb, L. Thiele, C. A. C. Coello, and D. Corne, editors. Evolutionary Multi-Criterion Optimization (Lecture Notes in Computer Science 1993). 
+// Heidelberg: Springer, 2001
 
 /* # define sch1 */
 /* # define sch2 */
