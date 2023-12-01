@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-11-29 15:23:26
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-11-29 16:17:00
+ * @LastEditTime: 2023-12-01 16:27:03
  * @FilePath: /gongweijing/nsga2/Project_Design.md
  * @Description: 记录项目主要框架
  * 
@@ -85,3 +85,57 @@ $$\alpha =2arcsin(\frac{d}{h})$$
 # Question:
 - what is J2000?
 - 
+
+
+# 多目标
+## 观测目标
+- 尽可能完成多个目标的观测：
+$$
+f_1(x)=min\ -x_n \ 最大化观测数目\\
+f_2(x)=min\ -\sum_i (h_i\times 10+m_i\times3+l_i\times 1) \ 观测收益\\
+f_3(x)=min\ \sum (pic_1\times 10+pic_2 \times 3+pic_3 \times 1)\ 成像质量,对应三种成像模式；也跟成像角度有关，后续添加。
+\\
+$$
+
+## 约束条件
+### 时间窗口相关
+$$
+ta_i表示观测开始时间\\
+dt_i表示成像时长,与成像模式相关\\
+\\
+\begin{cases}
+T_{start}\le ta_i& 最早观测开始时间不早于可见窗口开始时刻T_{start}\\
+ta_i\le T_{end}-dt_i& 最晚观测开始时间不晚于可见窗口结束时刻T_{end}-成像时长\\
+ta_{i+1}>ta_i& 下一次成像时刻晚于当前成像时刻\\
+\end{cases}
+$$
+### 成像区域相关约束
+$$
+pos_i,pos_j表示两观测目标的经纬度\\
+dist表示计算两个目标的球面距离\\
+amp表示成像幅宽\\
+\begin{cases}
+dist_{pos_i,pos_j}\le amp& \\
+dist_{pos_i,pos_j}\le \frac{amp}{2}& 表明两个目标可以一次性被观测\\
+
+\end{cases}
+$$
+## mode
+
+## 输出
+target(观测的目标)|mode(选择的模式)|start time(观测开始时间MKT)
+|--|--|--|
+|8|0|3441241|
+
+## 仿真数据
+- 时间窗口长度:40~60秒
+- 窗口特点：1）相互间隔；2）相互重叠；
+- 成像目标: 
+    1. 个数：5个
+    1. 重要性（0/1/2）; 
+    2. 经度，纬度；小于一半幅宽，大于一半幅宽。
+    3. 卫星轨道倾角35deg，计算投影的时候计算垂直轨道方向。
+
+## SAR：
+1. 入射角范围：12~52
+2. 
