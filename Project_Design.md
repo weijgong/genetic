@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-11-29 15:23:26
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-01 16:27:03
+ * @LastEditTime: 2023-12-02 00:55:57
  * @FilePath: /gongweijing/nsga2/Project_Design.md
  * @Description: 记录项目主要框架
  * 
@@ -67,7 +67,7 @@ d表示某年中某一天的日期序号;$\phi$表示当前成像任务目标的
 $$\alpha =2arcsin(\frac{d}{h})$$
 其中,$\alpha$为星间相对相位,d为星间相对距离(m),h为轨道高度(m)。
 
-## STK simulate
+## STK simulate 1
 ### target(name longitude latitude)
 1. 北京 39.9118 116.379
 2. 海口 20.02   110.35
@@ -81,6 +81,39 @@ $$\alpha =2arcsin(\frac{d}{h})$$
 - 坐标系统为J2000
 - 仿真开始时间为:1th Jul 2007 12:00:00000,结束时间为:3th Jul 2007 12:00:00000,仿真步长为60sec.根据这 48hours 的仿真,可以得到每个采样时刻成像星和通信星在惯性坐标系下的位置信息和星下点轨迹信息。
 
+## STK simulate 2
+### satellite config
+name: YAOGAN-35 04A
+source: https://celestrak.org/satcat/search.php
+
+### point target
+```c
+name,latitude,longitude
+Point_Target1,6.443,110.537
+Point_Target2,57.222,-20.094
+Point_Target3,50.78,-5.025
+Point_Target4,83.353,161.73
+Point_Target5,-34.05,42.56
+Point_Target6,79.04,176.275
+Point_Target7,57.935,139.833
+Point_Target8,-15.303,-79.731
+Point_Target9,-28.67,128.083
+Point_Target10,25.246,135.527
+Point_Target11,-5.681,177.644
+Point_Target12,-28.476,148.493
+Point_Target13,-33.143,-143.135
+Point_Target14,-5.18,-37.027
+```
+
+# param config
+## 遗传算法
+- 种群的初始数目可以设定为：200
+- 种群的迭代次数可以设定为：300
+- 交叉概率：0.9
+- 变异概率：0.1
+### 编码方式
+
+### 约束配置
 
 # Question:
 - what is J2000?
