@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:15
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-02 01:47:29
+ * @LastEditTime: 2023-12-02 08:48:12
  * @FilePath: /root/genetic/sat_algorithm/read_access.c
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -16,24 +16,24 @@
 void parse_csv_line(char *line, struct AccessRecord *record) {
     char *token;
     token = strtok(line, ",");
-    record->access = atoi(token);
+    record->target_no = atoi(token);
 
     token = strtok(NULL, ",");
     strncpy(record->start_time, token, MAX_LINE_LENGTH);
 
     token = strtok(NULL, ",");
     strncpy(record->stop_time, token, MAX_LINE_LENGTH);
-
-    token = strtok(NULL, ",");
-    record->duration = atof(token);
+    
+    token = strtok(NULL,",");
+    record->duration = atoi(token);
 }
 
-int main() {
-    // 文件指针
+void init_time_windows(struct TimeWindow* time_window){
+        // 文件指针
     FILE *file;
 
     // 文件路径
-    const char *file_path = "your_csv_file.csv";
+    const char *file_path = "/root/genetic/sat_data/Satellite-Satellite1-Sensor-Sensor1-To-Target-Target1_Access.csv";
 
     // 打开文件以供读取
     file = fopen(file_path, "r");
@@ -50,12 +50,17 @@ int main() {
     while (fgets(line, sizeof(line), file) != NULL) {
         struct AccessRecord record;
         parse_csv_line(line, &record);
-        convert_to_utc(&record);
+        printf("%d %s %s\n",record.target_no,record.start_time,record.stop_time);
+        printf("%ld %ld\n",utc_to_tai(record.start_time),utc_to_tai(record.stop_time));
         printf("\n");
     }
 
     // 关闭文件
     fclose(file);
-
-    return 0;  // 返回零表示程序执行成功
 }
+
+// int main() {
+//     struct TimeWindow* time_window;
+//     init_time_windows(time_window);
+//     return 0;  // 返回零表示程序执行成功
+// }
