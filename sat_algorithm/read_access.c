@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:15
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-02 08:48:12
+ * @LastEditTime: 2023-12-02 23:43:57
  * @FilePath: /root/genetic/sat_algorithm/read_access.c
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -51,7 +51,8 @@ void init_time_windows(struct TimeWindow* time_window){
         struct AccessRecord record;
         parse_csv_line(line, &record);
         printf("%d %s %s\n",record.target_no,record.start_time,record.stop_time);
-        printf("%ld %ld\n",utc_to_tai(record.start_time),utc_to_tai(record.stop_time));
+        // printf("%ld %ld\n",utc_to_tai(record.start_time),utc_to_tai(record.stop_time));
+        
         printf("\n");
     }
 
@@ -59,8 +60,8 @@ void init_time_windows(struct TimeWindow* time_window){
     fclose(file);
 }
 
-// int main() {
-//     struct TimeWindow* time_window;
-//     init_time_windows(time_window);
-//     return 0;  // 返回零表示程序执行成功
-// }
+int main() {
+    struct TimeWindow* time_window;
+    init_time_windows(time_window);
+    return 0;  // 返回零表示程序执行成功
+}
