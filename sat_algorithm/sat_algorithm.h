@@ -2,12 +2,14 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:32
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-03 12:08:55
- * @FilePath: /root/genetic/sat_algorithm/sat_algorithm.h
+ * @LastEditTime: 2023-12-03 20:42:32
+ * @FilePath: /gongweijing/nsga2/sat_algorithm/sat_algorithm.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
+#include <stdlib.h>
 
 #define MAX_LINE_LENGTH 256
 #define MAX_TARGET_NUM 5
