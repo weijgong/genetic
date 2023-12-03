@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-03 00:17:15
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-03 00:59:36
+ * @LastEditTime: 2023-12-03 12:08:41
  * @FilePath: /root/genetic/sat_algorithm/read_position.c
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -23,13 +23,12 @@ void init_position(){
     int n = 0;
     // 读取CSV文件
     while (fgets(line, sizeof(line), file) != NULL) {
-        struct AccessRecord record;
-        char *token;
+        float *token;
         token = strtok(line, ",");
-        pos_list[n].latitude = atoi(token);
+        pos_list[n].latitude = atof(token);
 
         token = strtok(line, ",");
-        pos_list[n++].longitude = atoi(token);       
+        pos_list[n++].longitude = atof(token);       
     }
 }
 int main() {

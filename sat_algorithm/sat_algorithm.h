@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:32
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-03 00:43:34
+ * @LastEditTime: 2023-12-03 12:08:55
  * @FilePath: /root/genetic/sat_algorithm/sat_algorithm.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -27,9 +27,9 @@ struct TimeWindow{
 
 struct Position{
     // 纬度
-    int latitude;
+    float latitude;
     // 经度
-    int longitude;
+    float longitude;
 };
 
 // 注意转换成世界秒之后再进行间隔的计算即可。
