@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:32
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-03 20:42:32
+ * @LastEditTime: 2023-12-03 21:41:54
  * @FilePath: /gongweijing/nsga2/sat_algorithm/sat_algorithm.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -14,6 +14,8 @@
 #define MAX_LINE_LENGTH 256
 #define MAX_TARGET_NUM 5
 
+# define M_PI                3.14159265358979323846	
+# define EARTH_RADIUS_METER  6371000
 
 // 定义结构体表示闰秒的时间点和秒数
 struct LeapSecond {
@@ -57,3 +59,9 @@ void init_time_windows();
 void parse_csv_line(char *line, struct AccessRecord *record);
 // 读取经纬度文件，并将其赋值到tw_list中
 void init_position();
+// 角度转为弧度
+double to_radians(double degrees);
+// 根据haversine求解的球面距离
+double compute_haversine_distance(struct Position x, struct Position y);
+// 根据另一个公式求解球面距离
+double compute_curve_distance(struct Position x, struct Position y);
