@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-03 21:16:52
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-04 11:51:08
+ * @LastEditTime: 2023-12-04 19:10:21
  * @FilePath: /gongweijing/nsga2/sat_algorithm/compute_distance.c
  * @Description: 
  * 
@@ -105,6 +105,17 @@ double compute_steo_real_angle(Position a,Position b){
         else return -angle;
     }
     return 0.0;
+}
+
+// 计算投影的长度
+Distance compute_project_distance(Position a,Position b){
+    Distance dist;
+    double angle = compute_steo_real_angle(a,b);
+    double delt_angle = angle - INCLINE_ANGLE;
+    dist.true_dist = compute_curve_distance(a,b);
+    dist.along_orbit = dist.true_dist*cos(to_radians(delt_angle));
+    dist.vertical_orbit = dist.true_dist*sin(to_radians(delt_angle));
+    return dist;
 }
 
 // 赤道平面的法向量为
