@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-03 21:16:52
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-03 21:41:30
+ * @LastEditTime: 2023-12-04 08:52:27
  * @FilePath: /gongweijing/nsga2/sat_algorithm/compute_distance.c
  * @Description: 
  * 
@@ -32,4 +32,18 @@ double compute_curve_distance(struct Position x, struct Position y){
     double rad = acos(a);
     double dist = rad*EARTH_RADIUS_METER;
     return dist;
+}
+
+double compute_sphere_angle(struct Position x, struct Position y){
+    // 球面三角形的角度，待确定
+    double angle_betw = acos(sin(to_radians(x.latitude))*sin(to_radians(y.latitude))+
+                             cos(to_radians(x.latitude))*cos(to_radians(y.latitude))*cos(to_radians(y.longitude-x.longitude)));
+    return angle_betw;
+}
+
+struct Distance compute_all_distance(struct Position x, struct Position y){
+    struct Distance dist;
+    dist.true_dist = compute_haversine_distance(x,y);
+    double angle = compute_sphere_angle(x,y);
+    
 }

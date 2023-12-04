@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:32
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-03 21:41:54
+ * @LastEditTime: 2023-12-04 08:12:12
  * @FilePath: /gongweijing/nsga2/sat_algorithm/sat_algorithm.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -16,6 +16,7 @@
 
 # define M_PI                3.14159265358979323846	
 # define EARTH_RADIUS_METER  6371000
+# define INCLINE_ANGLE       35*M_PI/180
 
 // 定义结构体表示闰秒的时间点和秒数
 struct LeapSecond {
@@ -34,6 +35,12 @@ struct Position{
     float latitude;
     // 经度
     float longitude;
+};
+
+struct Distance{
+    float along_orbit;
+    float vertical_orbit;
+    float true_dist;
 };
 
 // 注意转换成世界秒之后再进行间隔的计算即可。
