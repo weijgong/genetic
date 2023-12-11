@@ -7,9 +7,10 @@
 # include "nsga2.h"
 # include "rand.h"
 
-
-#define example_of_integer_programming
 // # define sch1
+# define zdt3 
+// #define example_of_integer_programming
+
 
 #ifdef example_of_integer_programming
 void test_problem (double *xreal, double *xbin, int **gene, double *obj, double *constr)
@@ -228,7 +229,7 @@ void test_problem (double *xreal, double *xbin, int **gene, double *obj, double 
     }
     g = 9.0*g/29.0;
     g += 1.0;
-    h = 1.0 - sqrt(f1/g) - (f1/g)*sin(10.0*PI*f1);
+    h = 1.0 - sqrt(f1/g) - (f1/g)*sin(10.0*M_PI*f1);
     f2 = g*h;
     obj[0] = f1;
     obj[1] = f2;
@@ -437,21 +438,7 @@ void test_problem (double *xreal, double *xbin, int **gene, double *obj, double 
 }
 #endif
 
-/*  Test problem CTP1
-    # of real variables = 2
-    # of bin variables = 0
-    # of objectives = 2
-    # of constraints = 2
-    */
-/**
- * @description: 配置规划问题的框架
- * @param: double *xreal 实数变量的x的数组,xreal[0]表示xr_0
- * @param: double *xbin 二进制变量的x的数组,xbin[0]表示xb_0
- * @param: int **gene 如果计算问题中涉及到了直接对基因组进行目标函数计算,调用该数组
- * @param: double *obj 存放并传送目标函数数组
- * @param: double *constr 存放并传送限制条件数组
- * @return {*} None，指针传参
- */
+
 #ifdef ctp1
 void test_problem (double *xreal, double *xbin, int **gene, double *obj, double *constr)
 {

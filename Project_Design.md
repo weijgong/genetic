@@ -2,12 +2,17 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-11-29 15:23:26
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-11 00:35:01
+ * @LastEditTime: 2023-12-11 15:04:08
  * @FilePath: /gongweijing/nsga2/Project_Design.md
  * @Description: 记录项目主要框架
  * 
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
 -->
+# 项目估计
+感觉这个项目虽然功能实现的比较经典，但是由于接口有点复杂，每次配置的时候需要重新设定新的in文件+problem部分不能直接选择，
+后续根据job shop schedule问题实现相关的项目找个遗传算法来进行实现，目前时间已经到了12.11，所以需要加快工作进度，防止
+工期延误。
+
 # 测试问题
 ## 多目标优化问题描述：生产计划问题
 
