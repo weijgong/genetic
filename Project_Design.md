@@ -2,12 +2,34 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-11-29 15:23:26
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-10 17:04:47
+ * @LastEditTime: 2023-12-11 00:35:01
  * @FilePath: /gongweijing/nsga2/Project_Design.md
  * @Description: 记录项目主要框架
  * 
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
 -->
+# 测试问题
+## 多目标优化问题描述：生产计划问题
+
+### 决策变量：
+- $(x_1$): 生产产品1的数量（整数变量）
+- $(x_2$): 生产产品2的数量（整数变量）
+
+### 目标函数：
+1. **最大化利润：**
+   $[ Z_1 = - (20x_1 + 30x_2) ]$
+
+2. **最小化产品数量：**
+   $[ Z_2 = x_1 + x_2 ]$
+
+### 约束条件：
+$[ 2x_1 + 3x_2 \leq 60 ]$\
+$[ 4x_1 + 2x_2 \leq 80 ]$\
+$[ x_1 \leq 25 ]$\
+$[ x_2 \leq 30 ]$\
+$[ x_1, x_2 \geq 0 ] $（非负约束）
+
+
 # Design 1
 ## object function:
 1. 成像效果:

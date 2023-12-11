@@ -8,40 +8,20 @@
 # include "rand.h"
 
 
-// E. Zitzler, K. Deb, L. Thiele, C. A. C. Coello, and D. Corne, editors. Evolutionary Multi-Criterion Optimization (Lecture Notes in Computer Science 1993). 
-// Heidelberg: Springer, 2001
+#define example_of_integer_programming
+// # define sch1
 
-/* # define sch1 */
-/* # define sch2 */
-/* # define fon */
-/* # define kur */
-/* # define pol */
-/* # define vnt */
-// # define zdt1
-/* # define zdt2 */
-/* # define zdt3 */
-/* # define zdt4 */
-/* # define zdt5 */
-/* # define zdt6 */
-/* # define bnh */
-/* # define osy */
-/* # define srn */
-/* # define tnk */
-// # define ctp1 
-/* # define ctp2 */
-/* # define ctp3 */
-/* # define ctp4 */
-/* # define ctp5 */
-/* # define ctp6 */
-/* # define ctp7 */
-/*# define ctp8*/
+#ifdef example_of_integer_programming
+void test_problem (double *xreal, double *xbin, int **gene, double *obj, double *constr)
+{
+    obj[0] = -(xbin[0]*20+xbin[1]*30);
+    obj[1] = xbin[0] + xbin[1];
+    constr[0] = -(2*xbin[0]+3*xbin[1]-60);
+    constr[1] = -(4*xbin[0]+2*xbin[1]-80);
+    return;
+}
+#endif
 
-/*  Test problem SCH1
-    # of real variables = 1
-    # of bin variables = 0
-    # of objectives = 2
-    # of constraints = 0
-    */
 
 #ifdef sch1
 void test_problem (double *xreal, double *xbin, int **gene, double *obj, double *constr)
