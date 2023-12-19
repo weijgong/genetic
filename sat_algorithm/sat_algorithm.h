@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:32
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-04 19:11:16
+ * @LastEditTime: 2023-12-19 22:20:59
  * @FilePath: /gongweijing/nsga2/sat_algorithm/sat_algorithm.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -62,7 +62,16 @@ struct AccessRecord {
     char stop_time[MAX_LINE_LENGTH];
     // 间隔时间
     double duration;
-};
+};				
+
+
+typedef struct Sense_mode{
+    double imagingDuration;//成像时长(秒)
+    double resolution;     //分辨率(m)
+    double swathWidth;     //幅宽(km)
+    int isSlantView;       //是否可以斜视(1是/0否)
+    double slantAngle;     //斜视角度(deg)
+} Sense_mode;
 
 struct TimeWindow tw_list[MAX_TARGET_NUM];
 struct Position pos_list[MAX_TARGET_NUM];
@@ -111,3 +120,5 @@ double compute_steo_vector_with_inclination(Position a,Position b);
 double compute_steo_real_angle(Position a,Position b);
 // 计算投影的长度
 Distance compute_project_distance(Position a,Position b);
+// 读取传感器观测模式
+void read_sense_mode(Sense_mode **dataArray,int *numEntries);

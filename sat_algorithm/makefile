@@ -9,7 +9,7 @@ MAIN=main
 all:$(MAIN)
 $(MAIN):$(OBJS)
 	$(LD) $(LDFLAGS) $(OBJS) -o $(MAIN) -lm
-%.o: %.c nsga2.h rand.h
+%.o: %.c sat_algorithm.h
 	$(CC) $(CFLAGS)  -c $<
 clean:
 	$(RM) $(OBJS)

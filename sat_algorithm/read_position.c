@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-03 00:17:15
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-04 19:15:24
+ * @LastEditTime: 2023-12-19 21:46:47
  * @FilePath: /gongweijing/nsga2/sat_algorithm/read_position.c
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -34,12 +34,14 @@ void init_position(){
         cor_list[i] = to_steocord(pos_list[i]);
     }
 }
-int main() {
-    init_position();
-    printf("%f\n",compute_steo_dist(cor_list[0],cor_list[1]));
-    printf("%f\n",compute_steo_vector_with_inclination(pos_list[0],pos_list[1]));
-    printf("%f\n",to_degree(compute_steo_real_angle(pos_list[0],pos_list[1])));
-    Distance dist = compute_project_distance(pos_list[0],pos_list[1]);
-    printf("%f\t%f\t%f\n",dist.along_orbit,dist.vertical_orbit,dist.true_dist);
-    return 0;  // 返回零表示程序执行成功
-}
+
+// int main() {
+//     init_position();
+//     printf("%f\n",compute_steo_dist(cor_list[0],cor_list[1]));
+//     printf("%f\n",compute_steo_vector_with_inclination(pos_list[0],pos_list[1]));
+//     printf("%f\n",to_degree(compute_steo_real_angle(pos_list[0],pos_list[1])));
+//     Distance dist = compute_project_distance(pos_list[0],pos_list[1]);
+//     // 获取沿着轨道方向和垂直轨道的方向
+//     printf("%f\t%f\t%f\n",dist.along_orbit,dist.vertical_orbit,dist.true_dist);
+//     return 0;  // 返回零表示程序执行成功
+// }
