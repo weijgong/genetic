@@ -2,10 +2,14 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:32
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-20 00:27:34
+ * @LastEditTime: 2023-12-26 15:44:27
  * @FilePath: /gongweijing/nsga2/sat_algorithm/sat_algorithm.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
+#ifndef SAT_ALGORITHM_H
+
+#define SAT_ALGORITHM_H
+
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
@@ -74,9 +78,9 @@ typedef struct Sense_mode{
     double slantAngle;     //斜视角度(deg)
 } Sense_mode;
 
-struct TimeWindow tw_list [MAX_TARGET_NUM];
-struct Position   pos_list[MAX_TARGET_NUM];
-struct SteoCord   cor_list[MAX_TARGET_NUM];
+extern struct TimeWindow tw_list [MAX_TARGET_NUM];
+extern struct Position   pos_list[MAX_TARGET_NUM];
+extern struct SteoCord   cor_list[MAX_TARGET_NUM];
 
 typedef struct Distance Distance;
 typedef struct TimeWindow TimeWindow;
@@ -89,6 +93,11 @@ time_t utc_to_tai(char *utc_time);
 void init_time_windows();
 // 读取时间窗口的文件
 void parse_csv_line(char *line, struct AccessRecord *record);
+// 将时间窗口进行长度扩展，便于后续进行调度
+void extend_time_windows();
+// 绘制时间窗口
+void generateDataFile(const char* filename);
+
 // 读取经纬度文件，并将其赋值到tw_list中
 void init_position();
 // 角度转为弧度
@@ -123,3 +132,6 @@ double compute_steo_real_angle(Position a,Position b);
 Distance compute_project_distance(Position a,Position b);
 // 读取传感器观测模式
 void read_sense_mode(Sense_mode **dataArray,int *numEntries);
+
+
+#endif

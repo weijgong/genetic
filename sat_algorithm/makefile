@@ -12,7 +12,7 @@ $(TARGET): $(OBJECTS_C) $(OBJECTS_CPP)
 	$(CXX) $(CFLAGS) $(CXXFLAGS) -o $(TARGET) $(OBJECTS_C) $(OBJECTS_CPP)
 %.o: %.c sat_algorithm.h
 	$(CC) $(CFLAGS) -c $< -o $@
-%.o: %.cpp
+%.o: %.cpp sat_algorithm.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 clean:
 	rm -f $(OBJECTS_C) $(OBJECTS_CPP) $(TARGET)

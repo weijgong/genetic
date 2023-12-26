@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:15
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-20 00:27:52
+ * @LastEditTime: 2023-12-26 15:44:13
  * @FilePath: /root/genetic/sat_algorithm/read_access.c
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -38,7 +38,7 @@ void init_time_windows(){
     // 检查文件是否成功打开
     if (file == NULL) {
         fprintf(stderr, "无法打开文件：%s\n", file_path);
-        return 1;  // 返回非零值表示程序出错
+        exit(1);
     }
 
     char line[MAX_LINE_LENGTH];
@@ -58,6 +58,15 @@ void init_time_windows(){
     }
     // 关闭文件
     fclose(file);
+}
+
+void extend_time_windows(){
+    for(int i = 0;i<MAX_TARGET_NUM;i++){
+        time_t cent_time = (tw_list[i].start_time+tw_list[i].stop_time)/2;
+        tw_list[i].start_time = cent_time - tw_list[i].durations*5;
+        tw_list[i].stop_time = cent_time + tw_list[i].durations*5;
+        tw_list[i].durations *=5;
+    }
 }
 
 // int main() {
