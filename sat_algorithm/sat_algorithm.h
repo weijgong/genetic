@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:32
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-19 22:20:59
+ * @LastEditTime: 2023-12-20 00:27:34
  * @FilePath: /gongweijing/nsga2/sat_algorithm/sat_algorithm.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -26,6 +26,7 @@ struct LeapSecond {
 };
 
 struct TimeWindow{
+    int target_no;
     time_t start_time;
     time_t stop_time;
     time_t durations;
@@ -73,9 +74,9 @@ typedef struct Sense_mode{
     double slantAngle;     //斜视角度(deg)
 } Sense_mode;
 
-struct TimeWindow tw_list[MAX_TARGET_NUM];
-struct Position pos_list[MAX_TARGET_NUM];
-struct SteoCord cor_list[MAX_TARGET_NUM];
+struct TimeWindow tw_list [MAX_TARGET_NUM];
+struct Position   pos_list[MAX_TARGET_NUM];
+struct SteoCord   cor_list[MAX_TARGET_NUM];
 
 typedef struct Distance Distance;
 typedef struct TimeWindow TimeWindow;

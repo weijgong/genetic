@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-11-29 15:23:26
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-11 15:04:08
+ * @LastEditTime: 2023-12-20 09:26:37
  * @FilePath: /gongweijing/nsga2/Project_Design.md
  * @Description: 记录项目主要框架
  * 
@@ -226,3 +226,33 @@ target(观测的目标)|mode(选择的模式)|start time(观测开始时间MKT)
 #### 成像区域相关约束：
 1. 目标 $i$ 和目标 $j$ 的距离在成像宽度的一半以内：$g3 = dist(s_i,s_j)-\frac{amp_i}{2}\le0,\ if\ s_i+1==s_j$
 
+### 输出需求
+1. 获取每个目标的观测与否的状况；
+2. 获取每个目标（特别是被观测的目标）的实际观测时间窗口开始时间以及采用的具体模式（是否侧视、采用的传感器模式）；
+
+## 类似的问题
+
+Minimize: TotalCommunicationTime
+
+Subject to:
+
+1. Each satellite is communicated exactly once:
+$$
+   \sum_{j \in GroundStations} x_{ij} = 1
+$$
+2. Each ground station communicates with exactly one satellite:
+$$
+   \sum_{i \in Satellites} x_{ij} = 1
+$$
+3. Time window constraints for satellite communication:
+$$
+   EarliestStart_i <= Arrival_j <= LatestEnd_i,  
+$$
+4. Total communication time constraint:
+$$
+   \sum_{i \in Satellites} communication_time_i * x_{ij} <= TotalCommunicationTime
+$$
+5. Binary decision variables:
+$$
+   x_{ij} = {0, 1}
+$$
