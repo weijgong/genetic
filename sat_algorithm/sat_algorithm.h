@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:32
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-26 15:44:27
+ * @LastEditTime: 2023-12-28 10:47:26
  * @FilePath: /gongweijing/nsga2/sat_algorithm/sat_algorithm.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -15,6 +15,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <iostream>
 
 #define MAX_LINE_LENGTH 256
 #define MAX_TARGET_NUM 5
@@ -95,8 +96,12 @@ void init_time_windows();
 void parse_csv_line(char *line, struct AccessRecord *record);
 // 将时间窗口进行长度扩展，便于后续进行调度
 void extend_time_windows();
-// 绘制时间窗口
+// 写入时间窗口dat文件
 void generateDataFile(const char* filename);
+// 绘制时间窗口
+void plot_time_window(const char* filename);
+// 绘制各个目标的时间窗口
+void plot_target_windows(const char* filename,int earliest_time_start,int slowes_time_stop);
 
 // 读取经纬度文件，并将其赋值到tw_list中
 void init_position();
