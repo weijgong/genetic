@@ -2,12 +2,13 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:21
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-29 13:27:28
+ * @LastEditTime: 2024-01-01 18:56:19
  * @FilePath: /root/genetic/sat_algorithm/main.c
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 // I.E.
 #include "sat_algorithm.h"
+#include "coding.h"
 using namespace std;
 
 
@@ -19,6 +20,7 @@ struct SteoCord   cor_list[MAX_TARGET_NUM];
 
 
 int main(){
+    srand((unsigned)time(NULL));
     Sense_mode *SenseModeArray = NULL;
     int numMode = 0;
     read_sense_mode(&SenseModeArray,&numMode);
@@ -43,7 +45,7 @@ int main(){
     // }
 
     extend_time_windows();
-    time_t earliest_time_start = INFINITY;
+    time_t earliest_time_start = (time_t)INFINITY;
     time_t slowes_time_stop = 0;
     for(int i = 0;i<MAX_TARGET_NUM;i++){
         if(earliest_time_start>tw_list[i].start_time){
@@ -65,7 +67,7 @@ int main(){
     for(int i = 0;i<MAX_TARGET_NUM;i++){
         tw_list[i].start_time-=earliest_time_start;
         tw_list[i].stop_time-=earliest_time_start;
-        printf("Start:%ld,end:%ld,duration:%ld\n",tw_list[i].start_time,tw_list[i].stop_time,tw_list[i].durations);
+        // printf("Start:%ld,end:%ld,duration:%ld\n",tw_list[i].start_time,tw_list[i].stop_time,tw_list[i].durations);
     }
 
     
@@ -78,6 +80,18 @@ int main(){
     //     printf("Target Longitude: %f \n", pos_list[i].longitude);
     //     printf("\n");
     // }
+
+    EvaluationCode ec_simple;
+
+    ec_simple.exec_satellite_index = 0;
+    ec_simple.target_no = 0;
+    ec_simple.pop_main = encode_main_code(1);
+    for(int i = 0;i <=numMode;i ++){
+        ec_simple.pop_main_decode = i;
+        ec_simple.window = tw_list[ec_simple.target_no];
+        ec_simple.set_mode(SenseModeArray);
+        ec_simple.exec_central_window();
+    }    
 
     free(SenseModeArray);
     return 0;
