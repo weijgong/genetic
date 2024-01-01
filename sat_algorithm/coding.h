@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2024-01-01 15:23:38
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2024-01-01 17:34:33
+ * @LastEditTime: 2024-01-02 00:16:54
  * @FilePath: /root/genetic/genetic_v1/coding.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -36,8 +36,7 @@ class EvaluationCode{
         int exec_satellite_index;
         struct TimeWindow window;
         bool* pop_main;
-        int * pop_sub;        
-        int fitness;
+        int * pop_sub;
         int pop_main_decode;
 
         int mode;
@@ -47,6 +46,8 @@ class EvaluationCode{
         void exec_central_window();
         void nout_time_proc();
         void set_mode(Sense_mode *SenseModeArray);
+        // 个体初始化
+        void init_individual(Sense_mode *SenseModeArray,int target_no);
 };
 
 // 生成初始种群
