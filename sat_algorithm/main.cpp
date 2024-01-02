@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:21
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2024-01-02 12:03:09
+ * @LastEditTime: 2024-01-02 13:48:40
  * @FilePath: /gongweijing/genetic/sat_algorithm/main.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -84,7 +84,12 @@ int main(){
     // }
     GeneticAlgorithm algo(100,0.1,0.9);
     vector<Individual> population = algo.initializePopulation(SenseModeArray);
+    for (int i = 0; i < population.size(); ++i){
+        cout<<"第"<<i<<"个个体的基因："<<endl;
+        algo.nout_individual(population[i]);
+    }
     
+    // algo.nout_individual(population[0]);
 
     free(SenseModeArray);
     return 0;

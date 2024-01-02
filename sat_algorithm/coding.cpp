@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2024-01-01 15:34:57
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2024-01-01 23:16:39
+ * @LastEditTime: 2024-01-02 13:34:51
  * @FilePath: /root/genetic/sat_algorithm/coding.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -33,7 +33,7 @@ void EvaluationCode::set_mode(Sense_mode *SenseModeArray){
         mode = this->pop_main_decode-1;
     }
     this->observe_time = SenseModeArray[mode].imagingDuration;  
-    printf("the observe time is:%f,",this->observe_time);  
+    // printf("the observe time is:%f,",this->observe_time);  
 }
 
 void EvaluationCode::nout_time_proc(){
@@ -55,7 +55,7 @@ void EvaluationCode::exec_central_window(){
                                  + this->window.start_time;
         this->real_finish_time = this->real_start_time + this->observe_time;
     }
-    this->nout_time_proc();
+    // this->nout_time_proc();
 }
 
 bool** gene_init_main_pop(){
