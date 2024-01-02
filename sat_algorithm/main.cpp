@@ -2,13 +2,14 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:21
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2024-01-02 00:38:18
- * @FilePath: /root/genetic/sat_algorithm/main.c
+ * @LastEditTime: 2024-01-02 12:03:09
+ * @FilePath: /gongweijing/genetic/sat_algorithm/main.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 // I.E.
 #include "sat_algorithm.h"
 #include "coding.h"
+#include "genetic.h"
 
 using namespace std;
 
@@ -81,13 +82,9 @@ int main(){
     //     printf("Target Longitude: %f \n", pos_list[i].longitude);
     //     printf("\n");
     // }
-
-    EvaluationCode* ec_simple = (EvaluationCode*)malloc(sizeof(EvaluationCode)*MAX_TARGET_NUM);
-    for(int i = 0;i < MAX_TARGET_NUM; i++){
-        // 种群初始化
-        ec_simple[i].init_individual(SenseModeArray,i);
-    }
-
+    GeneticAlgorithm algo(100,0.1,0.9);
+    vector<Individual> population = algo.initializePopulation(SenseModeArray);
+    
 
     free(SenseModeArray);
     return 0;
