@@ -2,11 +2,23 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2024-01-02 00:21:15
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2024-01-02 00:24:52
+ * @LastEditTime: 2024-01-02 00:41:49
  * @FilePath: /root/genetic/sat_algorithm/genetic.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-#include "genetic.h"
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+#include <cmath>
+#include <algorithm>
+
+
+// 定义个体结构
+struct Individual {
+    std::vector<double> genes;  // 基因
+    double fitness;            // 适应度
+};
 
 class GeneticAlgorithm {
 private:
@@ -133,3 +145,24 @@ public:
         return min + static_cast<double>(rand()) / RAND_MAX * (max - min);
     }
 };
+
+int main() {
+    // 设置随机种子
+    srand(static_cast<unsigned>(time(nullptr)));
+
+    // 创建遗传算法对象
+    GeneticAlgorithm geneticAlgorithm(50, 10, 0.01, 0.8);
+
+    // 运行遗传算法，进行100代演化
+    Individual result = geneticAlgorithm.evolve(100);
+
+    // 打印最终结果
+    std::cout << "最优个体的适应度: " << result.fitness << std::endl;
+    std::cout << "最优个体的基因: ";
+    for (double gene : result.genes) {
+        std::cout << gene << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}

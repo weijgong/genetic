@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-31 21:52:12
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2024-01-01 15:34:02
+ * @LastEditTime: 2024-01-02 00:39:56
  * @FilePath: /root/genetic/genetic_v1/main.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * 
@@ -80,9 +80,9 @@ void encode_bin_from_dec(int dec){
     cout<<endl;
 }
 
-int main(){
-    // bool* a = encode_main_code(3);
-    // int b = decode_main_code(a);
-    // cout<<b<<endl;
-    gene_init_main_pop();
-}
+// int main(){
+//     // bool* a = encode_main_code(3);
+//     // int b = decode_main_code(a);
+//     // cout<<b<<endl;
+//     gene_init_main_pop();
+// }
