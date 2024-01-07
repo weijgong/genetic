@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2024-01-01 15:34:57
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2024-01-02 13:34:51
+ * @LastEditTime: 2024-01-07 04:03:28
  * @FilePath: /root/genetic/sat_algorithm/coding.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -42,11 +42,11 @@ void EvaluationCode::nout_time_proc(){
 
 void EvaluationCode::exec_central_window(){
     int central_time       = (this->window.start_time + this->window.stop_time)/2;
-    if(this->mode==-1){
+    if(this->pop_main_decode==0){
         this->real_start_time  = this->window.start_time;
         this->real_finish_time = this->window.start_time;
     }
-    else if(this->mode>=0 && this->mode<=1){
+    else if(this->pop_main_decode>=1 && this->pop_main_decode<=2){
         this->real_start_time  = central_time - this->observe_time/2;
         this->real_finish_time = central_time + this->observe_time/2;
     }
@@ -55,7 +55,22 @@ void EvaluationCode::exec_central_window(){
                                  + this->window.start_time;
         this->real_finish_time = this->real_start_time + this->observe_time;
     }
-    // this->nout_time_proc();
+
+    // 版本1的代码，需要用到mode,不能直接通过decode求，修改成只需要decode的
+    // if(this->mode==-1){
+    //     this->real_start_time  = this->window.start_time;
+    //     this->real_finish_time = this->window.start_time;
+    // }
+    // else if(this->mode>=0 && this->mode<=1){
+    //     this->real_start_time  = central_time - this->observe_time/2;
+    //     this->real_finish_time = central_time + this->observe_time/2;
+    // }
+    // else{
+    //     this->real_start_time  = (double)rand()/RAND_MAX * (this->window.durations-this->observe_time)
+    //                              + this->window.start_time;
+    //     this->real_finish_time = this->real_start_time + this->observe_time;
+    // }
+    // // this->nout_time_proc();
 }
 
 bool** gene_init_main_pop(){

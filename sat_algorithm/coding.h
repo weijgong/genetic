@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2024-01-01 15:23:38
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2024-01-02 00:16:54
+ * @LastEditTime: 2024-01-06 03:12:12
  * @FilePath: /root/genetic/genetic_v1/coding.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -35,10 +35,12 @@ class EvaluationCode{
         double real_finish_time;
         int exec_satellite_index;
         struct TimeWindow window;
+        // 这个是二进制编码，不过好像也能直接整数编码？
         bool* pop_main;
         int * pop_sub;
+        // pop_main_decode: 0不观测 1 2 3对应三种观测模式，跟mode有点重复其实
         int pop_main_decode;
-
+        // mode: -1不观测 0 1 2对应10 5 0.5
         int mode;
         double observe_time;
 

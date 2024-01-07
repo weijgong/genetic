@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-01 23:39:37
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-02 23:24:05
+ * @LastEditTime: 2024-01-06 23:40:04
  * @FilePath: /root/genetic/sat_algorithm/time_trans.c
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -21,7 +21,6 @@ time_t utc_to_tai(char *utc_time) {
     int num_leap_seconds = sizeof(leap_seconds) / sizeof(leap_seconds[0]);
 
     time_t utc_seconds;
-    double mill;
 
     struct tm tm_time;
 
