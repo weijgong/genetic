@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2024-01-02 00:21:19
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2024-01-07 04:05:32
+ * @LastEditTime: 2024-01-08 01:32:07
  * @FilePath: /gongweijing/genetic/sat_algorithm/genetic.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%A
  */
@@ -22,6 +22,8 @@ typedef struct Individual {
 
 // 绘制任意个体的时序图
 void plot_individual(Individual ec,int earliest_time_start,int slowes_time_stop);
+// 可设置文件名的个体时序图
+void plot_individual_with_name(char* filename,Individual ec,int earliest_time_start,int slowes_time_stop);
 
 class GeneticAlgorithm {
 private:
@@ -30,14 +32,15 @@ private:
     double mutationRate;   // 变异率
     double crossoverRate;  // 交叉率
 public:
-    
+    int GetPopulationSize();
+
     EvaluationCode* getRandomGene(Sense_mode *SenseModeArray);
     GeneticAlgorithm(int popSize, double mutationRate, double crossoverRate);
     vector<Individual> initializePopulation(Sense_mode *SenseModeArray);
     
     // fitness计算
-    double calculateFitness(Individual& individual);
-    void assginFitness(vector<Individual>& Population);
+    double calculateFitness(Individual individual);
+    void assginFitness(vector<Individual>&Population);
     
     // 输出个体跟种群
     void nout_individual(Individual ec);
@@ -45,7 +48,7 @@ public:
 
     // 将错误的个体更正
     Individual RepairUnfeasibleSolution(Individual ec);
-    void reGenerateOfferingInfo(Individual& ind);
+    Individual reGenerateOfferingInfo(Individual ind,Sense_mode* SenseModeArray);
 
     // 选择算法
     vector<Individual> SampleTournament(vector<Individual> population,int pool_number);
@@ -58,9 +61,7 @@ public:
     vector<Individual> crossover(vector<Individual> parent);
 
     // 变异算法
-    void mutate(Individual& individual);
-
-    // 主迭代
+    Individual mutate(Individual individual);
     
 };
 

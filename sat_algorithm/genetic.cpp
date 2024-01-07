@@ -1,12 +1,18 @@
 #include "genetic.h"
 using namespace std;
 
-void GeneticAlgorithm::reGenerateOfferingInfo(Individual& ind){
+int GeneticAlgorithm::GetPopulationSize(){
+    return this->populationSize;
+}
+
+Individual GeneticAlgorithm::reGenerateOfferingInfo(Individual ind,Sense_mode* SenseModeArray){
     for(int i = 0;i < MAX_TARGET_NUM;i ++){
+        ind.genes[i].set_mode(SenseModeArray);
         ind.genes[i].exec_central_window();
     }
-    this->RepairUnfeasibleSolution(ind);     
-    // this->calculateFitness   
+    ind = this->RepairUnfeasibleSolution(ind);
+    ind.fitness = this->calculateFitness(ind);
+    return ind;
 }
 
 GeneticAlgorithm::GeneticAlgorithm(int popSize, double mutationRate, double crossoverRate)
@@ -14,13 +20,13 @@ GeneticAlgorithm::GeneticAlgorithm(int popSize, double mutationRate, double cros
         }
 
 Individual GeneticAlgorithm::RepairUnfeasibleSolution(Individual ec){
-    vector<double> start_time_copy(MAX_TARGET_NUM,0);
-    vector<int>    target_index(MAX_TARGET_NUM,0);
+    vector<double> start_time_copy(MAX_TARGET_NUM);
+    vector<int>    target_index(MAX_TARGET_NUM);
     for(int i=0;i<MAX_TARGET_NUM;i++){
         start_time_copy[i] = ec.genes[i].real_start_time;        
     }
 
-    vector<pair<double, int> > vp;
+    vector<pair<double, int>> vp;
     for (int i = 0; i < MAX_TARGET_NUM; ++i) {
         vp.push_back(make_pair(start_time_copy[i], i));
     }
@@ -28,7 +34,8 @@ Individual GeneticAlgorithm::RepairUnfeasibleSolution(Individual ec){
     for (int i = 0; i < vp.size(); i++) {
         target_index[i]=vp[i].second;
         // cout<<target_index[i]<<endl;
-    }    
+    }
+
     double occupied_timestamp = ec.genes[target_index[0]].real_finish_time;
     for(int i = 1;i < MAX_TARGET_NUM;i++){
         if(ec.genes[target_index[i]].pop_main_decode!=0){
@@ -65,6 +72,7 @@ vector<Individual> GeneticAlgorithm::initializePopulation(Sense_mode *SenseModeA
         Individual ec_ind;
         ec_ind.genes = getRandomGene(SenseModeArray);
         ec_ind = this->RepairUnfeasibleSolution(ec_ind);
+        ec_ind.fitness = this->calculateFitness(ec_ind);
         population.push_back(ec_ind);
     }
     return population;
@@ -86,7 +94,7 @@ void GeneticAlgorithm::abort_population(vector<Individual>Population){
 }
 
 // 计算个体适应度
-double GeneticAlgorithm::calculateFitness(Individual& ec) {
+double GeneticAlgorithm::calculateFitness(Individual ec) {
     double fitness = 0;
     for(int i = 0; i < MAX_TARGET_NUM; i ++){
         if(ec.genes[i].pop_main_decode==0){            
@@ -101,6 +109,7 @@ double GeneticAlgorithm::calculateFitness(Individual& ec) {
             fitness+=1;
         }
     }
+    return fitness;
 }
 
 void GeneticAlgorithm::assginFitness(vector<Individual>& Population){
@@ -158,14 +167,21 @@ vector<Individual> GeneticAlgorithm::TournamentSelection(vector<Individual> popu
 
 // 交叉
 vector<Individual> GeneticAlgorithm::crossover(vector<Individual> parent) {
-    int randmask = (float) rand() / RAND_MAX;
+    double randmask = (float) rand() / RAND_MAX;
     vector<int> mask;
     vector<Individual>child(2);
 
+    // cout<<"mask:\t";
     for(int i = 0;i < MAX_TARGET_NUM;i ++){
         randmask = (float) rand() / RAND_MAX;
-        mask.push_back(randmask);
+        int randi;
+        if(randmask>0.5)randi=1;
+        else randi = 0;
+        mask.push_back(randi);
+        // cout<<randi<<"\t";
     }
+    // cout<<endl;
+
     Individual parent1 = parent[0];
     Individual parent2 = parent[1];
     // 赋值之前要先初始化空间出来，当然也能直接采用push_back加进去两个父代便于交叉
@@ -219,13 +235,14 @@ vector<Individual> GeneticAlgorithm::crossover(vector<Individual> parent) {
 }
 
 // 变异
-void GeneticAlgorithm::mutate(Individual& ind) {
+Individual GeneticAlgorithm::mutate(Individual ind) {
     for (int i = 0;i < MAX_TARGET_NUM;i ++) {
         if ( (float) rand() / RAND_MAX < this->mutationRate) {
             // 整数编码中的任意一个都算是符合要求的
             ind.genes[i].pop_main_decode = rand()%MainCoding_CASE;
         }
     }
+    return ind;
 }
 
 // 遗传算法主循环

@@ -1,7 +1,7 @@
 CC = gcc
 CXX = g++
-CFLAGS = -Wall -Wextra
-CXXFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra -g
+CXXFLAGS = -Wall -Wextra -g
 OBJECTS_C = $(patsubst %.c,%.o,$(wildcard *.c))
 OBJECTS_CPP = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 TARGET = main
