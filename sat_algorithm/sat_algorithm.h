@@ -2,8 +2,8 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:32
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2024-01-05 21:03:12
- * @FilePath: /gongweijing/nsga2/sat_algorithm/sat_algorithm.h
+ * @LastEditTime: 2024-01-08 17:05:54
+ * @FilePath: /gongweijing/genetic/sat_algorithm/sat_algorithm.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 #ifndef SAT_ALGORITHM_H
@@ -17,7 +17,9 @@
 #include <math.h>
 #include <iostream>
 #include <bits/stdc++.h>
+#include <unistd.h>
 
+using namespace std;
 
 #define MAX_LINE_LENGTH 256
 #define MAX_TARGET_NUM 5
@@ -89,6 +91,11 @@ typedef struct Distance Distance;
 typedef struct TimeWindow TimeWindow;
 typedef struct Position Position;
 typedef struct SteoCord SteoCord;
+
+// 获取工作目录
+string getExecuatePath();
+// 获取工作目录上级目录
+string getExecuateParentPath();
 
 // 将UTC转换为TAI
 time_t utc_to_tai(char *utc_time);

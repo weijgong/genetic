@@ -2,14 +2,19 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-19 21:52:49
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-26 15:38:41
- * @FilePath: /root/genetic/sat_algorithm/read_mode.cpp
+ * @LastEditTime: 2024-01-08 17:23:39
+ * @FilePath: /gongweijing/genetic/sat_algorithm/read_mode.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 #include "sat_algorithm.h"
 
 void read_sense_mode(Sense_mode **dataArray,int *numEntries) {
-    FILE *file = fopen("/root/genetic/sat_data/sat_mode.csv", "r");
+    string root_path = getExecuateParentPath();
+    string data_path = "/sat_data/sat_mode.csv";
+    string filepath = root_path.append(data_path);
+    const char *file_path = filepath.c_str();
+
+    FILE *file = fopen(file_path, "r");
     if (file == NULL) {
         perror("Error opening file");
         exit(1);

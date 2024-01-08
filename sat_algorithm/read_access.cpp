@@ -2,13 +2,37 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:15
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2023-12-27 16:17:42
- * @FilePath: /root/genetic/sat_algorithm/read_access.c
+ * @LastEditTime: 2024-01-08 17:23:06
+ * @FilePath: /gongweijing/genetic/sat_algorithm/read_access.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 
 #include "sat_algorithm.h"
+using namespace std;
 
+
+string getExecuatePath(){
+    char buff[FILENAME_MAX];
+    getcwd( buff, FILENAME_MAX );
+    string current_working_dir(buff);
+    return current_working_dir;
+}
+
+string getExecuateParentPath(){
+    string current_working_dir = getExecuatePath();
+    size_t lastSlashPos = current_working_dir.find_last_of('/');
+
+    if (lastSlashPos != std::string::npos) {
+        // Extract the substring up to the last slash position
+        std::string result = current_working_dir.substr(0, lastSlashPos+1);
+        // std::cout << "Processed path: " << result << std::endl;
+        return result;
+    } else {
+        // Handle the case when no slash is found
+        std::cout << "Invalid path" << std::endl;
+        return "";
+    }
+}
 
 void parse_csv_line(char *line, struct AccessRecord *record) {
     char *token;
@@ -29,8 +53,11 @@ void init_time_windows(){
         // 文件指针
     FILE *file;
 
+    string root_path = getExecuateParentPath();
+    string data_path = "/sat_data/Satellite-Satellite1-Sensor-Sensor1-To-Target-Target1_Access.csv";
+    string filepath = root_path.append(data_path);
     // 文件路径
-    const char *file_path = "/root/genetic/sat_data/Satellite-Satellite1-Sensor-Sensor1-To-Target-Target1_Access.csv";
+    const char *file_path = filepath.c_str();
 
     // 打开文件以供读取
     file = fopen(file_path, "r");
