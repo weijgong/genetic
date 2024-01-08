@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:21
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2024-01-08 10:27:21
+ * @LastEditTime: 2024-01-08 18:47:58
  * @FilePath: /gongweijing/genetic/sat_algorithm/main.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -92,7 +92,9 @@ int main(){
     
     GeneticAlgorithm algo(populationSize,mutation_ratio,crossover_ratio);
     vector<Individual> population = algo.initializePopulation(SenseModeArray);
-    Individual best_ind = population[0];
+    Individual best_ind = algo.Tournament(population);
+    cout<<"初始最优个体\n";
+    algo.nout_individual(best_ind);
 /*
     algo.nout_individual(population[0]);
     plot_individual_with_name("test_plot.png",population[0],earliest_time_start,slowes_time_stop);
@@ -196,6 +198,7 @@ int main(){
 
         if(best_ind.fitness < cur_best_ind.fitness){
             // 每当更新最优的个体的时候就abort一次
+            cout<<"出现更优的个体，更新\n";
             best_ind = cur_best_ind;
             algo.nout_individual(best_ind);
         }
@@ -211,6 +214,7 @@ int main(){
     // best_ind = algo.Tournament(population);
     cout<<"最好的个体："<<endl;
     algo.nout_individual(best_ind);
+    
     plot_individual_with_name("best_pop_in_simple_genetic.png",best_ind,earliest_time_start,slowes_time_stop);
     // *********************************** Evolve Process End ***********************************
     
