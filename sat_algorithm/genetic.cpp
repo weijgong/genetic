@@ -201,37 +201,6 @@ vector<Individual> GeneticAlgorithm::crossover(vector<Individual> parent) {
 
     return child;
 
-// #### 不确定是不是这样写，可能不是，先暂定不是
-    // if(randmask<this->crossoverRate){
-    //     vector<int> mask;
-    //     vector<Individual>child(2);
-
-    //     for(int i = 0;i < MAX_TARGET_NUM;i ++){
-    //         randmask = (float) rand() / RAND_MAX;
-    //         mask.push_back(randmask);
-    //     }
-    //     Individual parent1 = parent[0];
-    //     Individual parent2 = parent[1];
-    //     // 赋值之前要先初始化空间出来，当然也能直接采用push_back加进去两个父代便于交叉
-    //     child[0] = parent1;
-    //     child[1] = parent2;
-        
-    //     for(int i = 0;i < MAX_TARGET_NUM;i ++){
-    //         if(mask[i]==1){
-    //             // 注意进行交叉的时候只对于每个编码进行交叉，其余的基础信息不需要进行交叉处理
-    //             child[0].genes[i].pop_main_decode = parent2.genes[i].pop_main_decode;
-    //             child[1].genes[i].pop_main_decode = parent1.genes[i].pop_main_decode;
-    //         }
-    //         else{
-    //             // 好像初始化的时候对应的父代基因自动复制进去了，不需要进行赋值
-    //         }
-    //     }
-
-    //     return child;
-    // }
-    // else{
-    //     return parent;
-    // }
 }
 
 // 变异
@@ -244,40 +213,3 @@ Individual GeneticAlgorithm::mutate(Individual ind) {
     }
     return ind;
 }
-
-// 遗传算法主循环
-// Individual evolve(int generations) {
-//     std::vector<Individual> population = initializePopulation();
-
-//     for (int generation = 0; generation < generations; ++generation) {
-//         for (Individual& individual : population) {
-//             calculateFitness(individual);
-//         }
-
-//         std::vector<Individual> newPopulation;
-
-//         for (int i = 0; i < populationSize; ++i) {
-//             Individual parent1 = selectParent(population);
-//             Individual parent2 = selectParent(population);
-
-//             Individual child = crossover(parent1, parent2);
-//             mutate(child);
-
-//             newPopulation.push_back(child);
-//         }
-
-//         population = newPopulation;
-//     }
-
-//     // 返回最终种群中适应度最高的个体
-//     return *std::max_element(population.begin(), population.end(),
-//                                 [](const Individual& ind1, const Individual& ind2) {
-//                                     return ind1.fitness < ind2.fitness;
-//                                 });
-// }
-
-
-// // 获取指定范围内的随机数
-// double getRandomNumber(double min, double max) {
-//     return min + static_cast<double>(rand()) / RAND_MAX * (max - min);
-// }
