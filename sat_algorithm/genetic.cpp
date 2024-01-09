@@ -185,19 +185,29 @@ vector<Individual> GeneticAlgorithm::crossover(vector<Individual> parent) {
     Individual parent1 = parent[0];
     Individual parent2 = parent[1];
     // 赋值之前要先初始化空间出来，当然也能直接采用push_back加进去两个父代便于交叉
-    child[0] = parent1;
-    child[1] = parent2;
+
+    EvaluationCode* c1_gene = new EvaluationCode[MAX_TARGET_NUM];
+    EvaluationCode* c2_gene = new EvaluationCode[MAX_TARGET_NUM];
+
+    child[0].fitness = parent1.fitness;
+    child[1].fitness = parent2.fitness;
     
     for(int i = 0;i < MAX_TARGET_NUM;i ++){
+        c1_gene[i] = parent1.genes[i];
+        c2_gene[i] = parent2.genes[i];
+
         if(mask[i]==1){
             // 注意进行交叉的时候只对于每个编码进行交叉，其余的基础信息不需要进行交叉处理
-            child[0].genes[i].pop_main_decode = parent2.genes[i].pop_main_decode;
-            child[1].genes[i].pop_main_decode = parent1.genes[i].pop_main_decode;
+            c1_gene[i].pop_main_decode = parent2.genes[i].pop_main_decode;
+            c2_gene[i].pop_main_decode = parent1.genes[i].pop_main_decode;
         }
         else{
             // 好像初始化的时候对应的父代基因自动复制进去了，不需要进行赋值
         }
     }
+
+    child[0].genes = c1_gene;
+    child[1].genes = c2_gene;
 
     return child;
 

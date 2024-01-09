@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:21
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2024-01-09 03:09:06
+ * @LastEditTime: 2024-01-09 18:16:27
  * @FilePath: /gongweijing/genetic/sat_algorithm/main.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -21,9 +21,9 @@ struct SteoCord   cor_list[MAX_TARGET_NUM];
 #include <stdio.h>
 
 void nout_individual_gene(Individual ind){
-    cout<<"coding:";
+    cout<<"ind code:\t";
     for(int i = 0; i < MAX_TARGET_NUM;i ++){
-        cout<<ind.genes[i].pop_main_decode<<" ";
+        cout<<ind.genes[i].pop_main_decode;
     }cout<<endl;
 }
 
@@ -167,37 +167,54 @@ int main(){
     plot_individual_with_name("test_plot.png",best_child,earliest_time_start,slowes_time_stop);
     // ************** 测试代码👆 **************
 */
-    vector<Individual> newPopulation;
-    vector<Individual> parent;
     
-    Individual cur_best_ind;
-
     int poolNumber = 2;
     
     for(int epoch = 0;epoch < generation_number; epoch ++){
+        vector<Individual> newPopulation(populationSize);
+        Individual cur_best_ind;
+        Individual best_child;
         for(int i = 0;i < algo.GetPopulationSize();i ++){
-            vector<Individual>* child = new vector<Individual>(poolNumber);
-            parent = algo.TournamentSelection(population,2,6);
+            vector<Individual> child(poolNumber);
+            vector<Individual> parent = algo.TournamentSelection(population,2,6);
+
+        /*
+            // 问题大概率在下面这部分
+            gdb main  b main.cpp:185 r 
+            display parent
+            display child
+            parent被浅拷贝进了child,由于parent本身设定的是一个不断被删除生成的数据,所以随着地址的内容不断变化,进而影响了剩余全部的数据;
+            在crossover进行深拷贝之后，截断了child跟parent指向同一个Ev
+            p algo.abort_population (parent)
+            display nout_individual_gene(child[0])
+        */
+            child = algo.crossover(parent);
+
+            child[0] = algo.mutate(child[0]);
+            child[1] = algo.mutate(child[1]);
+
+            child[0] = algo.reGenerateOfferingInfo(child[0],SenseModeArray);
+            child[1] = algo.reGenerateOfferingInfo(child[1],SenseModeArray);
             
-            *child = algo.crossover(parent);
+            best_child=algo.Tournament(child);
+            newPopulation[i] = best_child;
 
-            (*child)[0] = algo.mutate((*child)[0]);
-            (*child)[1] = algo.mutate((*child)[1]);
-
-            (*child)[0] = algo.reGenerateOfferingInfo((*child)[0],SenseModeArray);
-            (*child)[1] = algo.reGenerateOfferingInfo((*child)[1],SenseModeArray);
-
-            Individual* best_child = new Individual;
-            *best_child = algo.Tournament(*child);
-            newPopulation.push_back(*best_child);
-            // b main.cpp:193 display *best_child  display newPopulation display *child
-            // display nout_individual_gene(*best_child) 
-            // 问题查出：上一次放入population的变量被child变量覆盖了
-            // 解决方案，直接一次性生成n个个体，然后每次赋值即可
 /*
     cout<<"Epoch\tBestFit\t\tEncoding\n";
     
         cout<<"pop_num\tfitness\t\tencoding\n";
+        
+            // b main.cpp:191 display best_child  display newPopulation display child
+            // display nout_individual_gene(*best_child) 
+            // 问题查出：上一次放入population的变量被child变量覆盖了
+            // 解决方案，直接一次性生成n个个体，然后每次赋值
+
+            // 确定是否为repair的bug
+            algo.abort_population(child);
+
+            cout<<"第"<<i<<"轮的子代对个体地址为："<<&(child[0])<<" "<<&(child[1])<<endl;
+            cout<<"第"<<i<<"轮的子代对最优个体地址为："<<&best_child<<endl;
+            cout<<"存储到Pupulation的地址为"<<&(newPopulation[i])<<endl;
 
             cout<<"第"<<i<<"轮的子代对\n";
             algo.nout_individual(*best_child);
@@ -251,7 +268,8 @@ int main(){
 
         // algo.assginFitness(newPopulation);        
         cur_best_ind = algo.Tournament(newPopulation);
-        algo.nout_individual(cur_best_ind);
+        // cout<<"当前种群最好的个体:"<<&cur_best_ind<<endl;
+        // algo.nout_individual(cur_best_ind);
 
         if(best_ind.fitness < cur_best_ind.fitness){
             // 每当更新最优的个体的时候就abort一次
