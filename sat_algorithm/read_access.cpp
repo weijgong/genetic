@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-02 01:33:15
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2024-01-08 17:23:06
+ * @LastEditTime: 2024-01-23 01:23:24
  * @FilePath: /gongweijing/genetic/sat_algorithm/read_access.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -54,7 +54,9 @@ void init_time_windows(){
     FILE *file;
 
     string root_path = getExecuateParentPath();
-    string data_path = "/sat_data/Satellite-Satellite1-Sensor-Sensor1-To-Target-Target1_Access.csv";
+    // string data_path = "/sat_data/Satellite-Satellite1-Sensor-Sensor1-To-Target-Target1_Access.csv";
+    // string data_path = "/sat_data/2024-1-22-Satellite-Satellite1-Sensor-Sensor1-To-Target-Target1_Access.csv";
+    string data_path = "/sat_data/10-target-time-windows.csv";
     string filepath = root_path.append(data_path);
     // 文件路径
     const char *file_path = filepath.c_str();

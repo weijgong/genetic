@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2023-12-26 15:34:19
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2024-01-07 12:02:07
+ * @LastEditTime: 2024-01-23 18:52:49
  * @FilePath: /root/genetic/sat_algorithm/gnu_timewindow_plot.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -157,6 +157,56 @@ void plot_individual_with_name(char* filename,Individual ec,int earliest_time_st
         fprintf(gnuplotPipe, "0 0\n");
         fprintf(gnuplotPipe, "e\n");
         fprintf(gnuplotPipe, "pause mouse keypress 'Press any key to exit...'\n");
+        
+        fclose(gnuplotPipe);
+    } else {
+        printf("Error: Couldn't open Gnuplot pipe.\n");
+    }
+}
+
+void plot_individual_on_oneline_with_name(char* filename,Individual ec,int earliest_time_start,int slowes_time_stop){
+    FILE *gnuplotPipe = popen("gnuplot -persistent", "w");
+
+    if (gnuplotPipe != NULL) {
+        const char *colors[10] = {
+            "red", "green", "blue", "orange", "purple",
+            "cyan", "magenta", "yellow", "brown", "pink"
+        };
+        fprintf(gnuplotPipe, "set title 'Single machine for target'\n");
+        fprintf(gnuplotPipe, "set terminal pngcairo enhanced font 'arial,10'\n");
+        fprintf(gnuplotPipe, "set size ratio .25\n");
+        fprintf(gnuplotPipe, "set output '%s'\n",filename);
+        // 设定坐标系上下限
+        fprintf(gnuplotPipe,"set xrange[%d:%d]\nset yrange[%d:%d]\n",0-1,slowes_time_stop-earliest_time_start,
+                0,2
+                );        
+        // 设定坐标轴名称
+        fprintf(gnuplotPipe,"set xlabel 'timeline'\n set ylabel 'target number'\n");
+        // 遍历生成多个矩形
+        for(int i = 0;i<MAX_TARGET_NUM;i++){
+            fprintf(gnuplotPipe, "set object %d rect from %f,%f to %f,%f fc rgb '%s'\n", 
+                    i+1,
+                    ec.genes[i].real_start_time,1-0.25,
+                    ec.genes[i].real_finish_time,1+0.25,
+                    colors[i]
+                    );
+            if(ec.genes[i].pop_main_decode!=0){
+                // 给每个任务添加注释
+                fprintf(gnuplotPipe, "set label '%d' at %f,%d center font ',8' textcolor lt -1 rotate by -90\n", 
+                        i+1, 
+                        (ec.genes[i].real_start_time + ec.genes[i].real_finish_time) / 2.0,
+                        1
+                        );
+            }
+
+        }        
+        // fprintf(gnuplotPipe, "set key fixed right top vertical Right noreverse noenhanced autotitle box\n");
+        // fprintf(gnuplotPipe, "set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinvert bdefault\n");
+        fprintf(gnuplotPipe, "set key off\n");
+        fprintf(gnuplotPipe, "plot '-'\n");
+        fprintf(gnuplotPipe, "0 0\n");
+        fprintf(gnuplotPipe, "e\n");
+        fprintf(gnuplotPipe, "pause mouse keypress 'Draw oneline src success!'\n");
         
         fclose(gnuplotPipe);
     } else {

@@ -2,7 +2,7 @@
  * @Author: gongweijing 876887913@qq.com
  * @Date: 2024-01-01 15:23:38
  * @LastEditors: gongweijing 876887913@qq.com
- * @LastEditTime: 2024-01-06 03:12:12
+ * @LastEditTime: 2024-01-23 01:07:56
  * @FilePath: /root/genetic/genetic_v1/coding.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -21,7 +21,6 @@
 
 
 #define MAIN_BIN_BITS 2
-#define MAX_TARGET_NUM 5
 
 // 三种模式加上一种什么模式都不选择的
 #define MainCoding_CASE 4

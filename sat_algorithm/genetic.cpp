@@ -96,19 +96,24 @@ void GeneticAlgorithm::abort_population(vector<Individual>Population){
 // 计算个体适应度
 double GeneticAlgorithm::calculateFitness(Individual ec) {
     double fitness = 0;
+    int observed_target_num=0;
     for(int i = 0; i < MAX_TARGET_NUM; i ++){
         if(ec.genes[i].pop_main_decode==0){            
         }
         else if(ec.genes[i].pop_main_decode==1){
             fitness+=10;
+            observed_target_num+=1;
         }
         else if(ec.genes[i].pop_main_decode==2){
             fitness+=5;
+            observed_target_num+=1;
         }
         else if(ec.genes[i].pop_main_decode==3){
             fitness+=1;
+            observed_target_num+=1;
         }
     }
+    fitness += observed_target_num;
     return fitness;
 }
 
