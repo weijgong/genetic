@@ -14,6 +14,7 @@ sudo su
 git config --global user.email "876887913@qq.com"
 git config --global user.name "weijgong"
 
+sudo su
 git add .
 git commit -m "完成保存窗口、模式的代码"
 git push origin nsga-II
