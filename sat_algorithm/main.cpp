@@ -29,6 +29,11 @@ void nout_individual_gene(Individual ind){
 int main(){
     srand((unsigned)time(NULL));
     Sense_mode *SenseModeArray = NULL;
+
+    vector<int>           _mode(MAX_TARGET_NUM);
+    vector<vector<double>> vtws(MAX_TARGET_NUM,vector<double>(2));
+    vector<vector<double>> ows (MAX_TARGET_NUM,vector<double>(2));
+
     int numMode = 0;
     read_sense_mode(&SenseModeArray,&numMode);
     init_time_windows();
@@ -52,11 +57,7 @@ int main(){
         tw_list[i].start_time -= earliest_time_start;
         tw_list[i].stop_time  -= earliest_time_start;
         // printf("Start:%ld,end:%ld,duration:%ld\n",tw_list[i].start_time,tw_list[i].stop_time,tw_list[i].durations);
-    }
-
-    
-    // 绘制各个任务同一个timeline的甘特图
-    plot_target_windows("all_access_timewindows.png",earliest_time_start,slowes_time_stop);
+    }   
 
     // *********************************** Evolve Process ***********************************
     int populationSize = 100;
@@ -64,12 +65,9 @@ int main(){
     double crossover_ratio = 0.9;
     int generation_number = 200;
 
-    
     GeneticAlgorithm algo(populationSize,mutation_ratio,crossover_ratio);
     vector<Individual> population = algo.initializePopulation(SenseModeArray);
     Individual best_ind = algo.Tournament(population);
-    cout<<"初始最优个体"<<&best_ind<<"\n";
-    algo.nout_individual(best_ind);
 
     int poolNumber = 2;
     
@@ -111,12 +109,30 @@ int main(){
     
     cout<<"最好的个体"<<&best_ind<<"："<<endl;
     algo.nout_individual(best_ind);
-    
+
+/*
+    plot_target_windows("all_access_timewindows.png",earliest_time_start,slowes_time_stop);
     plot_individual_with_name("best_pop_in_simple_genetic.png",best_ind,earliest_time_start,slowes_time_stop);
     plot_individual_on_oneline_with_name("best_pop_in_simple_genetic_oneline.png",best_ind,earliest_time_start,slowes_time_stop);
+*/
     // *********************************** Evolve Process End ***********************************
+    FILE *vtw_ow_fileP;
+    vtw_ow_fileP = fopen("/home/gwj/genetic/sat_algorithm/time_windows_data.dat", "w");
+    if (vtw_ow_fileP == nullptr) {
+        std::cerr << "Error opening file!" << std::endl;
+        return 1;
+    }
 
-
+    for(int i=0;i<MAX_TARGET_NUM;i++){
+        vtws[i][0] = best_ind.genes[i].window.start_time;
+        vtws[i][1] = best_ind.genes[i].window.stop_time;
+        ows [i][0] = best_ind.genes[i].real_start_time;
+        ows [i][1] = best_ind.genes[i].real_finish_time;
+        _mode  [i] = best_ind.genes[i].pop_main_decode;
+        fprintf(vtw_ow_fileP, "%f,%f,%f,%f,%d\n",vtws[i][0],vtws[i][1],ows [i][0],ows [i][1],_mode  [i]);
+    }
+    
+    fclose(vtw_ow_fileP);
     free(SenseModeArray);
     return 0;
 }
@@ -156,6 +172,9 @@ int main(){
 */
 
 /*
+    cout<<"初始最优个体"<<&best_ind<<"\n";
+    algo.nout_individual(best_ind);
+    
     algo.nout_individual(population[0]);
     plot_individual_with_name("test_plot.png",population[0],earliest_time_start,slowes_time_stop);
     plot_individual(population[0],earliest_time_start,slowes_time_stop);
