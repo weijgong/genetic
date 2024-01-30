@@ -18,7 +18,6 @@ struct TimeWindow tw_list [MAX_TARGET_NUM];
 struct Position   pos_list[MAX_TARGET_NUM];
 struct SteoCord   cor_list[MAX_TARGET_NUM];
 
-#include <stdio.h>
 
 void nout_individual_gene(Individual ind){
     cout<<"ind code:\t";
@@ -32,26 +31,7 @@ int main(){
     Sense_mode *SenseModeArray = NULL;
     int numMode = 0;
     read_sense_mode(&SenseModeArray,&numMode);
-    
-    // for (int i = 0; i < numMode; i++) {
-    //     printf("Mode %d:\n", i + 1);
-    //     printf("Imaging Duration: %.2lf seconds\n", SenseModeArray[i].imagingDuration);
-    //     printf("Resolution: %.2lf meters\n", SenseModeArray[i].resolution);
-    //     printf("Swath Width: %.2lf kilometers\n", SenseModeArray[i].swathWidth);
-    //     printf("Is Slant View: %d\n", SenseModeArray[i].isSlantView);
-    //     printf("Slant Angle: %.2lf degrees\n", SenseModeArray[i].slantAngle);
-    //     printf("\n");
-    // }    
-
     init_time_windows();
-    // for(int i = 0;i<MAX_TARGET_NUM;i++){
-    //     printf("Target no %d:\n", tw_list[i].target_no);
-    //     printf("Start time windows: %ld \n", tw_list[i].start_time);
-    //     printf("End time windows: %ld \n", tw_list[i].stop_time);
-    //     printf("Time windows duration: %ld \n", tw_list[i].durations);
-    //     printf("\n");
-    // }
-
     extend_time_windows();
     time_t earliest_time_start = (time_t)INFINITY;
     time_t slowes_time_stop = 0;
@@ -62,11 +42,7 @@ int main(){
         if(slowes_time_stop<tw_list[i].stop_time){
             slowes_time_stop = tw_list[i].stop_time;
         }
-        // printf("Target no %d:\n", tw_list[i].target_no);
-        // printf("Start time windows: %ld \n", tw_list[i].start_time);
-        // printf("End time windows: %ld \n", tw_list[i].stop_time);
-        // printf("Time windows duration: %ld \n", tw_list[i].durations);
-        // printf("\n");
+
     }
     // cout<<"最早的时间窗口开始时间为："<<earliest_time_start<<endl;
     // cout<<"最晚的时间窗口结束时间为："<<slowes_time_stop<<endl;
@@ -82,13 +58,6 @@ int main(){
     // 绘制各个任务同一个timeline的甘特图
     plot_target_windows("all_access_timewindows.png",earliest_time_start,slowes_time_stop);
 
-    // init_position();
-    // for(int i = 0;i<MAX_TARGET_NUM;i++){
-    //     printf("Target Latitude: %f \n", pos_list[i].latitude);
-    //     printf("Target Longitude: %f \n", pos_list[i].longitude);
-    //     printf("\n");
-    // }
-
     // *********************************** Evolve Process ***********************************
     int populationSize = 100;
     double mutation_ratio = 0.1;
@@ -101,6 +70,91 @@ int main(){
     Individual best_ind = algo.Tournament(population);
     cout<<"初始最优个体"<<&best_ind<<"\n";
     algo.nout_individual(best_ind);
+
+    int poolNumber = 2;
+    
+    for(int epoch = 0;epoch < generation_number; epoch ++){
+        vector<Individual> newPopulation(populationSize);
+        Individual cur_best_ind;
+        Individual best_child;
+        for(int i = 0;i < algo.GetPopulationSize();i ++){
+            vector<Individual> child(poolNumber);
+            vector<Individual> parent = algo.TournamentSelection(population,2,6);
+
+            child = algo.crossover(parent);
+
+            child[0] = algo.mutate(child[0]);
+            child[1] = algo.mutate(child[1]);
+
+            child[0] = algo.reGenerateOfferingInfo(child[0],SenseModeArray);
+            child[1] = algo.reGenerateOfferingInfo(child[1],SenseModeArray);
+            
+            best_child=algo.Tournament(child);
+            newPopulation[i] = best_child;
+        }
+
+        // algo.assginFitness(newPopulation);        
+        cur_best_ind = algo.Tournament(newPopulation);
+
+        if(best_ind.fitness < cur_best_ind.fitness){
+            // 每当更新最优的个体的时候就abort一次
+            printf("第%d次",epoch);
+            cout<<"出现更优的个体"<<&cur_best_ind<<",更新\n";
+            best_ind = cur_best_ind;
+            algo.nout_individual(best_ind);
+        }
+        
+        population = newPopulation;
+        newPopulation.clear();
+
+    }
+    
+    cout<<"最好的个体"<<&best_ind<<"："<<endl;
+    algo.nout_individual(best_ind);
+    
+    plot_individual_with_name("best_pop_in_simple_genetic.png",best_ind,earliest_time_start,slowes_time_stop);
+    plot_individual_on_oneline_with_name("best_pop_in_simple_genetic_oneline.png",best_ind,earliest_time_start,slowes_time_stop);
+    // *********************************** Evolve Process End ***********************************
+
+
+    free(SenseModeArray);
+    return 0;
+}
+
+    
+/*
+    for (int i = 0; i < numMode; i++) {
+        printf("Mode %d:\n", i + 1);
+        printf("Imaging Duration: %.2lf seconds\n", SenseModeArray[i].imagingDuration);
+        printf("Resolution: %.2lf meters\n", SenseModeArray[i].resolution);
+        printf("Swath Width: %.2lf kilometers\n", SenseModeArray[i].swathWidth);
+        printf("Is Slant View: %d\n", SenseModeArray[i].isSlantView);
+        printf("Slant Angle: %.2lf degrees\n", SenseModeArray[i].slantAngle);
+        printf("\n");
+    }  
+
+    for(int i = 0;i<MAX_TARGET_NUM;i++){
+        printf("Target no %d:\n", tw_list[i].target_no);
+        printf("Start time windows: %ld \n", tw_list[i].start_time);
+        printf("End time windows: %ld \n", tw_list[i].stop_time);
+        printf("Time windows duration: %ld \n", tw_list[i].durations);
+        printf("\n");
+    }
+
+    printf("Target no %d:\n", tw_list[i].target_no);
+    printf("Start time windows: %ld \n", tw_list[i].start_time);
+    printf("End time windows: %ld \n", tw_list[i].stop_time);
+    printf("Time windows duration: %ld \n", tw_list[i].durations);
+    printf("\n");
+
+    init_position();
+    for(int i = 0;i<MAX_TARGET_NUM;i++){
+        printf("Target Latitude: %f \n", pos_list[i].latitude);
+        printf("Target Longitude: %f \n", pos_list[i].longitude);
+        printf("\n");
+    }
+*/
+
 /*
     algo.nout_individual(population[0]);
     plot_individual_with_name("test_plot.png",population[0],earliest_time_start,slowes_time_stop);
@@ -168,15 +222,7 @@ int main(){
     // ************** 测试代码👆 **************
 */
     
-    int poolNumber = 2;
-    
-    for(int epoch = 0;epoch < generation_number; epoch ++){
-        vector<Individual> newPopulation(populationSize);
-        Individual cur_best_ind;
-        Individual best_child;
-        for(int i = 0;i < algo.GetPopulationSize();i ++){
-            vector<Individual> child(poolNumber);
-            vector<Individual> parent = algo.TournamentSelection(population,2,6);
+
 
         /*
             // 问题大概率在下面这部分
@@ -188,17 +234,17 @@ int main(){
             p algo.abort_population (parent)
             display nout_individual_gene(child[0])
         */
-            child = algo.crossover(parent);
-
-            child[0] = algo.mutate(child[0]);
-            child[1] = algo.mutate(child[1]);
-
-            child[0] = algo.reGenerateOfferingInfo(child[0],SenseModeArray);
-            child[1] = algo.reGenerateOfferingInfo(child[1],SenseModeArray);
-            
-            best_child=algo.Tournament(child);
-            newPopulation[i] = best_child;
-
+    /*
+        cout<<"循环外\n";
+        
+        printf("%d\t%f\t",epoch,cur_best_ind.fitness);
+        for(int mg = 0;mg < MAX_TARGET_NUM;mg ++){
+            printf("%d ",cur_best_ind.genes[mg].pop_main_decode);
+        }
+        cout<<endl;
+    */
+        // cout<<"当前种群最好的个体:"<<&cur_best_ind<<endl;
+        // algo.nout_individual(cur_best_ind);
 /*
     cout<<"Epoch\tBestFit\t\tEncoding\n";
     
@@ -264,43 +310,3 @@ int main(){
             }
 */
           
-        }
-
-        // algo.assginFitness(newPopulation);        
-        cur_best_ind = algo.Tournament(newPopulation);
-        // cout<<"当前种群最好的个体:"<<&cur_best_ind<<endl;
-        // algo.nout_individual(cur_best_ind);
-
-        if(best_ind.fitness < cur_best_ind.fitness){
-            // 每当更新最优的个体的时候就abort一次
-            printf("第%d次",epoch);
-            cout<<"出现更优的个体"<<&cur_best_ind<<",更新\n";
-            best_ind = cur_best_ind;
-            algo.nout_individual(best_ind);
-        }
-        
-        population = newPopulation;
-        newPopulation.clear();
-
-    /*
-        cout<<"循环外\n";
-        
-        printf("%d\t%f\t",epoch,cur_best_ind.fitness);
-        for(int mg = 0;mg < MAX_TARGET_NUM;mg ++){
-            printf("%d ",cur_best_ind.genes[mg].pop_main_decode);
-        }
-        cout<<endl;
-    */
-
-    }
-    
-    cout<<"最好的个体"<<&best_ind<<"："<<endl;
-    algo.nout_individual(best_ind);
-    
-    plot_individual_with_name("best_pop_in_simple_genetic.png",best_ind,earliest_time_start,slowes_time_stop);
-    // *********************************** Evolve Process End ***********************************
-    plot_individual_on_oneline_with_name("best_pop_in_simple_genetic_oneline.png",best_ind,earliest_time_start,slowes_time_stop);
-    free(SenseModeArray);
-    return 0;
-}
-
