@@ -194,8 +194,15 @@ int main(){
     fclose(vtw_ow_fileP);
 
     FILE *rescheduled_vtw_ow_fileP;
+    FILE *free_twP;
     rescheduled_vtw_ow_fileP = fopen("/home/gwj/genetic/sat_algorithm/rescheduled_time_windows_data.dat", "w");
+    free_twP = fopen("/home/gwj/genetic/sat_algorithm/free_time_windows_data.dat", "w");
     if (rescheduled_vtw_ow_fileP == nullptr) {
+        std::cerr << "Error opening file!" << std::endl;
+        return 1;
+    }
+    
+    if (free_twP == nullptr) {
         std::cerr << "Error opening file!" << std::endl;
         return 1;
     }
@@ -206,7 +213,8 @@ int main(){
     vector<int>       sch_task_index(MAX_TARGET_NUM);                    // 存储调度任务的下标
     
     int start = 0;
-    vector<double> interval_free;
+    int free_tw_cnt=0;
+    vector<vector<double>> interval_free;
     vector<double>tmps;
     for(int i=0;i<MAX_TARGET_NUM;i++){
         tmps.push_back(vtws[i][0]);
@@ -221,9 +229,24 @@ int main(){
 
     sort_ow_in_reg_Arrive(task_seting,task_seting.size());
     for(int i=0;i<MAX_TARGET_NUM;i++){
-        
+        if(task_seting[i][4]==0)continue;
+        if(task_seting[i][3]-task_seting[i][2]<0.5)continue;
+        tmps.push_back(start);
+        tmps.push_back(task_seting[i][2]);
+        interval_free.push_back(tmps);
+        vector<double>().swap(tmps);
+        start=task_seting[i][3];
+        fprintf(free_twP, "%f,%f\n",interval_free[free_tw_cnt][0],interval_free[free_tw_cnt][1]);
+        free_tw_cnt+=1;
     }
-
+    tmps.push_back(start);
+    tmps.push_back(slowes_time_stop);
+    interval_free.push_back(tmps);
+    vector<double>().swap(tmps);
+    fprintf(free_twP, "%f,%f\n",interval_free[free_tw_cnt][0],interval_free[free_tw_cnt][1]);
+    for(int i=0;i<interval_free.size();i++){
+        printf("%f,%f\n",interval_free[i][0],interval_free[i][1]);
+    }
 
     // 三种排序方法：到达时间优先、截止时间优先、等待时间优先
     // 按照vtws开始时间进行排序

@@ -21,6 +21,8 @@ echo "Zx123456" | sudo -S git commit -m "完成可视化流图代码，部分重
 
 echo "Zx123456" | sudo -S git add .
 echo "Zx123456" | sudo -S git commit -m "修复了tournament中的浅拷贝问题，考虑未来采用vector替代E*"
+
+
 git push origin nsga-II
 ```
 
