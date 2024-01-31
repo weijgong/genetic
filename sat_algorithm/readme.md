@@ -15,8 +15,8 @@ git config --global user.email "876887913@qq.com"
 git config --global user.name "weijgong"
 
 sudo su
-git add .
-echo "Zx123456" | sudo -S git commit -m "完成保存窗口、模式的代码"
+echo "Zx123456" | sudo -S git add .
+echo "Zx123456" | sudo -S git commit -m "完成可视化流图代码，部分重规划代码"
 git push origin nsga-II
 ```
 
@@ -41,7 +41,8 @@ sudo apt install gnuplot
 ```
 sudo apt install python3
 apt install python3-pip
-pip install matplotlib
+pip3 install matplotlib
+sudo apt-get install python3-tk
 ```
 
 # 文件内容

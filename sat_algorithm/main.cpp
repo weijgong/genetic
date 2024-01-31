@@ -133,6 +133,35 @@ int main(){
     }
     
     fclose(vtw_ow_fileP);
+
+    FILE *vtw_ow_fileP;
+    vtw_ow_fileP = fopen("/home/gwj/genetic/sat_algorithm/rescheduled_time_windows_data.dat", "w");
+    if (vtw_ow_fileP == nullptr) {
+        std::cerr << "Error opening file!" << std::endl;
+        return 1;
+    }
+
+    vector<vector<double>> rsch_vtws(MAX_TARGET_NUM,vector<double>(2));
+    vector<vector<double>> rsch_ows (MAX_TARGET_NUM,vector<double>(2));
+    vector<int>     unsch_task_index(MAX_TARGET_NUM);                    //存储未调度任务的下标
+    vector<vector<double>> rsch_vtws;
+    int start = 0;
+
+    for(int i=0;i<MAX_TARGET_NUM;i++){
+        vector<double> interval_free;
+        vtws[i][0] = best_ind.genes[i].window.start_time;
+        vtws[i][1] = best_ind.genes[i].window.stop_time;
+        ows [i][0] = best_ind.genes[i].real_start_time;
+        ows [i][1] = best_ind.genes[i].real_finish_time;
+        _mode[i] = best_ind.genes[i].pop_main_decode;
+        if(_mode[i]==0)unsch_task_index.push_back(i);
+        else{
+            interval_free.push_back();
+        }
+        fprintf(vtw_ow_fileP, "%f,%f,%f,%f,%d\n",vtws[i][0],vtws[i][1],ows [i][0],ows [i][1],_mode[i]);
+    }
+    
+    fclose(vtw_ow_fileP);
     free(SenseModeArray);
     return 0;
 }
