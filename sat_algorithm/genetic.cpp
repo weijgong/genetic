@@ -125,7 +125,12 @@ void GeneticAlgorithm::assginFitness(vector<Individual>& Population){
 
 // 从pool中找出最好的一个个体
 Individual GeneticAlgorithm::Tournament(vector<Individual> TournamentCandidate){
-    Individual best = TournamentCandidate[0];
+    Individual best;
+    best.genes = new EvaluationCode[MAX_TARGET_NUM];
+    best.fitness = TournamentCandidate[0].fitness;
+    for(int i=0;i<MAX_TARGET_NUM;i++){
+        best.genes[i] = TournamentCandidate[0].genes[i];
+    }
     for(int i = 1; i < TournamentCandidate.size();i ++){
         if(best.fitness < TournamentCandidate[i].fitness){
             best = TournamentCandidate[i];

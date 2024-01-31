@@ -12,12 +12,71 @@
 #include "genetic.h"
 
 using namespace std;
-
+void nout_individual_gene(Individual ind);
+bool compare_by_idx(vector<double> a,vector<double> b,int idx);
+void sort_in_reg_Arrive(vector<vector<double>> &arr,int size_);
+void sort_ow_in_reg_Arrive(vector<vector<double>> &arr,int size_);
+void quick_sort_by_arrive(vector<vector<double>> &arr, int start, int end);
+void quick_sort_by_ow_arrive(vector<vector<double>> &arr, int start, int end);
 
 struct TimeWindow tw_list [MAX_TARGET_NUM];
 struct Position   pos_list[MAX_TARGET_NUM];
 struct SteoCord   cor_list[MAX_TARGET_NUM];
 
+bool compare_by_idx(vector<double> a,vector<double> b,int idx){
+    if(a[idx]>=b[idx]){
+        return true;
+    }
+    else return false;
+}
+
+void sort_in_reg_Arrive(vector<vector<double>> &arr,int size_){
+    quick_sort_by_arrive(arr,0,size_-1);
+}
+
+void sort_ow_in_reg_Arrive(vector<vector<double>> &arr,int size_){
+    quick_sort_by_ow_arrive(arr,0,size_-1);
+}
+
+void quick_sort_by_ow_arrive(vector<vector<double>> &arr, int start, int end) {
+    if (start >= end)
+        return;
+    vector<double> mid = arr[end];
+    int left = start, right = end - 1;
+    while (left < right) {
+        while (!compare_by_idx(arr[left],mid,2) && left < right)
+            left++;
+        while (compare_by_idx(arr[right],mid,2) && left < right)
+            right--;
+        swap(arr[left], arr[right]);
+    }
+    if (compare_by_idx(arr[left],arr[end],2))
+        swap(arr[left], arr[end]);
+    else
+        left++;
+    quick_sort_by_ow_arrive(arr, start, left - 1);
+    quick_sort_by_ow_arrive(arr, left + 1, end);
+}
+
+void quick_sort_by_arrive(vector<vector<double>> &arr, int start, int end) {
+    if (start >= end)
+        return;
+    vector<double> mid = arr[end];
+    int left = start, right = end - 1;
+    while (left < right) {
+        while (!compare_by_idx(arr[left],mid,0) && left < right)
+            left++;
+        while (compare_by_idx(arr[right],mid,0) && left < right)
+            right--;
+        swap(arr[left], arr[right]);
+    }
+    if (compare_by_idx(arr[left],arr[end],0))
+        swap(arr[left], arr[end]);
+    else
+        left++;
+    quick_sort_by_arrive(arr, start, left - 1);
+    quick_sort_by_arrive(arr, left + 1, end);
+}
 
 void nout_individual_gene(Individual ind){
     cout<<"ind code:\t";
@@ -134,38 +193,64 @@ int main(){
     
     fclose(vtw_ow_fileP);
 
-    FILE *vtw_ow_fileP;
-    vtw_ow_fileP = fopen("/home/gwj/genetic/sat_algorithm/rescheduled_time_windows_data.dat", "w");
-    if (vtw_ow_fileP == nullptr) {
+    FILE *rescheduled_vtw_ow_fileP;
+    rescheduled_vtw_ow_fileP = fopen("/home/gwj/genetic/sat_algorithm/rescheduled_time_windows_data.dat", "w");
+    if (rescheduled_vtw_ow_fileP == nullptr) {
         std::cerr << "Error opening file!" << std::endl;
         return 1;
     }
 
-    vector<vector<double>> rsch_vtws(MAX_TARGET_NUM,vector<double>(2));
-    vector<vector<double>> rsch_ows (MAX_TARGET_NUM,vector<double>(2));
-    vector<int>     unsch_task_index(MAX_TARGET_NUM);                    //存储未调度任务的下标
-    vector<vector<double>> rsch_vtws;
+    // *********************************** Re Schedule Process Start ***********************************
+    vector<vector<double>>task_seting;
+    vector<int>     unsch_task_index(MAX_TARGET_NUM);                    // 存储未调度任务的下标
+    vector<int>       sch_task_index(MAX_TARGET_NUM);                    // 存储调度任务的下标
+    
     int start = 0;
+    vector<double> interval_free;
+    vector<double>tmps;
+    for(int i=0;i<MAX_TARGET_NUM;i++){
+        tmps.push_back(vtws[i][0]);
+        tmps.push_back(vtws[i][1]);
+        tmps.push_back(ows[i][0]);
+        tmps.push_back(ows[i][1]);
+        tmps.push_back((double)_mode[i]);
+        tmps.push_back((double)i);
+        task_seting.push_back(tmps);
+        vector<double>().swap(tmps);
+    }
+
+    sort_ow_in_reg_Arrive(task_seting,task_seting.size());
+    for(int i=0;i<MAX_TARGET_NUM;i++){
+        
+    }
+
+
+    // 三种排序方法：到达时间优先、截止时间优先、等待时间优先
+    // 按照vtws开始时间进行排序
+    // Regulation AI:
+    sort_in_reg_Arrive(task_seting,task_seting.size());
 
     for(int i=0;i<MAX_TARGET_NUM;i++){
-        vector<double> interval_free;
-        vtws[i][0] = best_ind.genes[i].window.start_time;
-        vtws[i][1] = best_ind.genes[i].window.stop_time;
-        ows [i][0] = best_ind.genes[i].real_start_time;
-        ows [i][1] = best_ind.genes[i].real_finish_time;
-        _mode[i] = best_ind.genes[i].pop_main_decode;
-        if(_mode[i]==0)unsch_task_index.push_back(i);
-        else{
-            interval_free.push_back();
-        }
-        fprintf(vtw_ow_fileP, "%f,%f,%f,%f,%d\n",vtws[i][0],vtws[i][1],ows [i][0],ows [i][1],_mode[i]);
+        if(task_seting[i][4]==0)unsch_task_index.push_back(i);
+        else sch_task_index.push_back(i);
     }
+
+    // *********************************** Re Schedule Process End ***********************************
+    
     
     fclose(vtw_ow_fileP);
     free(SenseModeArray);
     return 0;
 }
 
+/*
+    for(int i=0;i<MAX_TARGET_NUM;i++){
+        for(int j=0;j<6;j++){
+            printf("%f\t",task_seting[i][j]);
+        }
+        printf("\n");
+    }
+*/
     
 /*
     for (int i = 0; i < numMode; i++) {
