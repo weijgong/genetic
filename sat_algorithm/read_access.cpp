@@ -10,6 +10,14 @@
 #include "sat_algorithm.h"
 using namespace std;
 
+void nout_struct_tm(struct tm tm_){
+    printf("Year: %d\n", tm_.tm_year + 1900); // 年份
+    printf("Month: %d\n", tm_.tm_mon + 1);     // 月份
+    printf("Day: %d\n", tm_.tm_mday);          // 日
+    printf("Hour: %d\n", tm_.tm_hour);         // 小时
+    printf("Minute: %d\n", tm_.tm_min);        // 分钟
+    printf("Second: %d\n", tm_.tm_sec);        // 秒
+}
 
 string getExecuatePath(){
     char buff[FILENAME_MAX];
@@ -50,43 +58,59 @@ void parse_csv_line(char *line, struct AccessRecord *record) {
 }
 
 void init_time_windows(){
-        // 文件指针
-    FILE *file;
-
     string root_path = getExecuateParentPath();
     // string data_path = "/sat_data/Satellite-Satellite1-Sensor-Sensor1-To-Target-Target1_Access.csv";
     // string data_path = "/sat_data/2024-1-22-Satellite-Satellite1-Sensor-Sensor1-To-Target-Target1_Access.csv";
-    string data_path = "/sat_data/10-target-time-windows.csv";
+    string data_path = "sat_data/10-target-time-windows.csv";
     string filepath = root_path.append(data_path);
-    // 文件路径
-    const char *file_path = filepath.c_str();
 
-    // 打开文件以供读取
-    file = fopen(file_path, "r");
+    vector<string> start_s;
+    vector<string> stop_s;
+    vector<string> duration_s;
+    vector<string> target_no_s;
 
-    // 检查文件是否成功打开
-    if (file == NULL) {
-        fprintf(stderr, "无法打开文件：%s\n", file_path);
-        exit(1);
+    ifstream inputFile(filepath); // 打开文件
+    if (inputFile.is_open()) { // 检查文件是否成功打开
+        string line;
+
+        int n = 0;
+        int pos = 0;
+        while (std::getline(inputFile, line)) {
+            pos = line.find(',');
+            target_no_s.push_back(line.substr(0,pos));
+            line = line.substr(pos+1,line.size());
+            pos = line.find(',');
+            start_s.push_back(line.substr(0,pos));
+            line = line.substr(pos+1,line.size());
+            pos = line.find(',');
+            stop_s.push_back(line.substr(0,pos));        
+            line = line.substr(pos+1,line.size());
+            pos = line.find(',');
+            duration_s.push_back(line.substr(0,pos));
+            
+            n+=1;
+        }
+        inputFile.close();
+    } else {
+        std::cerr << "Unable to open file" << std::endl;
     }
+    for(int i=0;i<MAX_TARGET_NUM;i++){
+        tw_list[i].target_no=stoi(target_no_s[i]);
+        tw_list[i].start_time=tm_to_seconds(start_s[i]);
+        tw_list[i].stop_time =tm_to_seconds(stop_s[i]);
+        tw_list[i].durations=stoi(duration_s[i]);
 
-    char line[MAX_LINE_LENGTH];
+        // printf("info:%ld,%ld,%ld,%ld\n",
+        // tw_list[i].target_no,
+        // tw_list[i].start_time,
+        // tw_list[i].stop_time,
+        // tw_list[i].durations);
 
-    int n = 0;
-    // 读取CSV文件
-    while (fgets(line, sizeof(line), file) != NULL) {
-        struct AccessRecord record;
-        parse_csv_line(line, &record);
-        // printf("%d %s %s\n",record.target_no,record.start_time,record.stop_time);
-        tw_list[n].target_no = record.target_no;
-        tw_list[n].start_time=utc_to_tai(record.start_time);
-        tw_list[n].stop_time=utc_to_tai(record.stop_time);
-        tw_list[n].durations=tw_list[n].stop_time-tw_list[n].start_time;
-        // printf("%ld %ld\n",utc_to_tai(record.start_time),utc_to_tai(record.stop_time));
-        n++;
+        // printf("%s,%s,%s,%s\n",target_no_s[i].data(),start_s[i].data(),stop_s[i].data(),duration_s[i].data());
+
+        // cout<<tm_to_seconds(start_s[i])<<"\n";
+        // cout<<tm_to_seconds(stop_s[i])<<"\n";
     }
-    // 关闭文件
-    fclose(file);
 }
 
 void extend_time_windows(){
@@ -95,6 +119,7 @@ void extend_time_windows(){
         tw_list[i].start_time = cent_time - tw_list[i].durations*5;
         tw_list[i].stop_time = cent_time + tw_list[i].durations*5;
         tw_list[i].durations *=2*5;
+        // printf("%d,%d,%d\n",tw_list[i].start_time,tw_list[i].stop_time,tw_list[i].durations);
     }
 }
 

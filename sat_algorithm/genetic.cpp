@@ -56,8 +56,8 @@ Individual GeneticAlgorithm::RepairUnfeasibleSolution(Individual ec){
 }
 
 // 获取随机基因
-EvaluationCode* GeneticAlgorithm::getRandomGene(Sense_mode *SenseModeArray) {
-    EvaluationCode* ec_simple = (EvaluationCode*)malloc(sizeof(EvaluationCode)*MAX_TARGET_NUM);
+vector<EvaluationCode> GeneticAlgorithm::getRandomGene(Sense_mode *SenseModeArray) {
+    vector<EvaluationCode>ec_simple(MAX_TARGET_NUM);
     for(int i = 0;i < MAX_TARGET_NUM; i++){
         // 种群初始化
         ec_simple[i].init_individual(SenseModeArray,i);
@@ -126,11 +126,6 @@ void GeneticAlgorithm::assginFitness(vector<Individual>& Population){
 // 从pool中找出最好的一个个体
 Individual GeneticAlgorithm::Tournament(vector<Individual> TournamentCandidate){
     Individual best;
-    best.genes = new EvaluationCode[MAX_TARGET_NUM];
-    best.fitness = TournamentCandidate[0].fitness;
-    for(int i=0;i<MAX_TARGET_NUM;i++){
-        best.genes[i] = TournamentCandidate[0].genes[i];
-    }
     for(int i = 1; i < TournamentCandidate.size();i ++){
         if(best.fitness < TournamentCandidate[i].fitness){
             best = TournamentCandidate[i];
@@ -179,45 +174,27 @@ vector<Individual> GeneticAlgorithm::TournamentSelection(vector<Individual> popu
 vector<Individual> GeneticAlgorithm::crossover(vector<Individual> parent) {
     double randmask = (float) rand() / RAND_MAX;
     vector<int> mask;
-    vector<Individual>child(2);
+    vector<Individual>child;
+    child = parent;
 
-    // cout<<"mask:\t";
     for(int i = 0;i < MAX_TARGET_NUM;i ++){
         randmask = (float) rand() / RAND_MAX;
         int randi;
         if(randmask>0.5)randi=1;
         else randi = 0;
         mask.push_back(randi);
-        // cout<<randi<<"\t";
     }
-    // cout<<endl;
 
-    Individual parent1 = parent[0];
-    Individual parent2 = parent[1];
-    // 赋值之前要先初始化空间出来，当然也能直接采用push_back加进去两个父代便于交叉
-
-    EvaluationCode* c1_gene = new EvaluationCode[MAX_TARGET_NUM];
-    EvaluationCode* c2_gene = new EvaluationCode[MAX_TARGET_NUM];
-
-    child[0].fitness = parent1.fitness;
-    child[1].fitness = parent2.fitness;
-    
     for(int i = 0;i < MAX_TARGET_NUM;i ++){
-        c1_gene[i] = parent1.genes[i];
-        c2_gene[i] = parent2.genes[i];
-
         if(mask[i]==1){
-            // 注意进行交叉的时候只对于每个编码进行交叉，其余的基础信息不需要进行交叉处理
-            c1_gene[i].pop_main_decode = parent2.genes[i].pop_main_decode;
-            c2_gene[i].pop_main_decode = parent1.genes[i].pop_main_decode;
-        }
-        else{
-            // 好像初始化的时候对应的父代基因自动复制进去了，不需要进行赋值
+            child[0].genes[i] = parent[1].genes[i];
+            child[1].genes[i] = parent[0].genes[i];
         }
     }
 
-    child[0].genes = c1_gene;
-    child[1].genes = c2_gene;
+    for(int i=0;i<child.size();i++){
+        child[i].fitness = this->calculateFitness(child[i]);
+    }
 
     return child;
 

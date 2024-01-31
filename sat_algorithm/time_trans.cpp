@@ -50,3 +50,52 @@ time_t utc_to_tai(char *utc_time) {
 //     return 0;
 // }
 
+time_t tm_to_seconds(string date_) {
+    struct tm* timeinfo;
+    if (strptime(date_.data(), "%d %b %Y %H:%M:%S", timeinfo) != NULL) {        
+    } else {
+        printf("Failed to parse date and time.\n");
+    }
+    return mktime(timeinfo);
+}
+
+// 将 struct tm 转换为 Modified Julian Date (MJD)
+double tm_to_mjd(string date_) {
+    struct tm timeinfo;
+    if (strptime(date_.data(), "%d %b %Y %H:%M:%S", &timeinfo) != NULL) {        
+    } else {
+        printf("Failed to parse date and time.\n");
+    }
+
+    int year = timeinfo.tm_year + 1900;
+    int month = timeinfo.tm_mon + 1;
+    int day = timeinfo.tm_mday;
+    int hour = timeinfo.tm_hour;
+    int minute = timeinfo.tm_min;
+    int second = timeinfo.tm_sec;
+
+    // 如果月份是1月或2月，则年份和月份都要减1
+    if (month <= 2) {
+        year--;
+        month += 12;
+    }
+
+    // 计算世纪数和年份的日数
+    int a = year / 100;
+    int b = 2 - a + a / 4;
+    int c = 365.25 * (year + 4716);
+    int d = 30.6001 * (month + 1);
+
+    // 计算总天数
+    double jd = b + c + d + day - 1524.5;
+
+    // 转换为 Modified Julian Date (MJD)
+    double mjd = jd - 2400000.5;
+
+    // 加上小时、分钟和秒的分数部分
+    double frac_day = (hour + minute / 60.0 + second / 3600.0) / 24.0;
+    mjd += frac_day;
+
+    return mjd;
+}
+

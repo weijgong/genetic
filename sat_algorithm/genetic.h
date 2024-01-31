@@ -15,7 +15,7 @@
 using namespace std;
 
 typedef struct Individual {
-    EvaluationCode* genes;
+    vector<EvaluationCode> genes;
     double fitness;
 }Individual;
 
@@ -36,7 +36,7 @@ private:
 public:
     int GetPopulationSize();
 
-    EvaluationCode* getRandomGene(Sense_mode *SenseModeArray);
+    vector<EvaluationCode> getRandomGene(Sense_mode *SenseModeArray);
     GeneticAlgorithm(int popSize, double mutationRate, double crossoverRate);
     vector<Individual> initializePopulation(Sense_mode *SenseModeArray);
     

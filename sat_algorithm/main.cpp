@@ -108,6 +108,7 @@ int main(){
         }
 
     }
+
     // cout<<"最早的时间窗口开始时间为："<<earliest_time_start<<endl;
     // cout<<"最晚的时间窗口结束时间为："<<slowes_time_stop<<endl;
 
@@ -127,7 +128,8 @@ int main(){
     GeneticAlgorithm algo(populationSize,mutation_ratio,crossover_ratio);
     vector<Individual> population = algo.initializePopulation(SenseModeArray);
     Individual best_ind = algo.Tournament(population);
-
+    algo.nout_individual(best_ind);
+/*
     int poolNumber = 2;
     
     for(int epoch = 0;epoch < generation_number; epoch ++){
@@ -149,8 +151,7 @@ int main(){
             best_child=algo.Tournament(child);
             newPopulation[i] = best_child;
         }
-
-        // algo.assginFitness(newPopulation);        
+      
         cur_best_ind = algo.Tournament(newPopulation);
 
         if(best_ind.fitness < cur_best_ind.fitness){
@@ -169,11 +170,6 @@ int main(){
     cout<<"最好的个体"<<&best_ind<<"："<<endl;
     algo.nout_individual(best_ind);
 
-/*
-    plot_target_windows("all_access_timewindows.png",earliest_time_start,slowes_time_stop);
-    plot_individual_with_name("best_pop_in_simple_genetic.png",best_ind,earliest_time_start,slowes_time_stop);
-    plot_individual_on_oneline_with_name("best_pop_in_simple_genetic_oneline.png",best_ind,earliest_time_start,slowes_time_stop);
-*/
     // *********************************** Evolve Process End ***********************************
     FILE *vtw_ow_fileP;
     vtw_ow_fileP = fopen("/home/gwj/genetic/sat_algorithm/time_windows_data.dat", "w");
@@ -206,6 +202,11 @@ int main(){
         std::cerr << "Error opening file!" << std::endl;
         return 1;
     }
+
+    // plot_target_windows("all_access_timewindows.png",earliest_time_start,slowes_time_stop);
+    // plot_individual_with_name("best_pop_in_simple_genetic.png",best_ind,earliest_time_start,slowes_time_stop);
+    // plot_individual_on_oneline_with_name("best_pop_in_simple_genetic_oneline.png",best_ind,earliest_time_start,slowes_time_stop);
+
 
     // *********************************** Re Schedule Process Start ***********************************
     vector<vector<double>>task_seting;
@@ -264,7 +265,15 @@ int main(){
     fclose(vtw_ow_fileP);
     free(SenseModeArray);
     return 0;
+*/
 }
+
+
+/*
+    plot_target_windows("all_access_timewindows.png",earliest_time_start,slowes_time_stop);
+    plot_individual_with_name("best_pop_in_simple_genetic.png",best_ind,earliest_time_start,slowes_time_stop);
+    plot_individual_on_oneline_with_name("best_pop_in_simple_genetic_oneline.png",best_ind,earliest_time_start,slowes_time_stop);
+*/
 
 /*
     for(int i=0;i<MAX_TARGET_NUM;i++){

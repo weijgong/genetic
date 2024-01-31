@@ -36,8 +36,8 @@ struct LeapSecond {
 
 struct TimeWindow{
     int target_no;
-    time_t start_time;
-    time_t stop_time;
+    long int start_time;
+    long int stop_time;
     time_t durations;
 };
 
@@ -99,6 +99,10 @@ string getExecuateParentPath();
 
 // 将UTC转换为TAI
 time_t utc_to_tai(char *utc_time);
+// UTC TO MJD
+double tm_to_mjd(string date_);
+// 转为秒
+time_t tm_to_seconds(string date_);
 // 读取时间窗口，并将其赋值到tw_list中
 void init_time_windows();
 // 读取时间窗口的文件
