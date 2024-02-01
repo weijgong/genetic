@@ -43,19 +43,23 @@ time_t utc_to_tai(char *utc_time) {
     return utc_seconds;
 }
 
-// int main() {
-//     char *utc_time = "1 Dec 2023 04:44:17.748";
-//     time_t tai = utc_to_tai(utc_time);
-//     printf("%ld\n",tai);
-//     return 0;
-// }
 
 time_t tm_to_seconds(string date_) {
-    struct tm* timeinfo;
-    if (strptime(date_.data(), "%d %b %Y %H:%M:%S", timeinfo) != NULL) {        
+    struct tm* timeinfo = new struct tm;
+    
+    if (strptime(date_.data(), "%d %b %Y %H:%M:%S", timeinfo) != NULL) {   
+        timeinfo->tm_isdst=-1;    
     } else {
         printf("Failed to parse date and time.\n");
     }
+    /*
+        printf("Year: %d\n",  timeinfo->tm_year + 1900); // 年份
+        printf("Month: %d\n", timeinfo->tm_mon + 1);     // 月份
+        printf("Day: %d\n",   timeinfo->tm_mday);          // 日
+        printf("Hour: %d\n",  timeinfo->tm_hour);         // 小时
+        printf("Minute: %d\n",timeinfo->tm_min);        // 分钟
+        printf("Second: %d\n",timeinfo->tm_sec);        // 秒
+    */
     return mktime(timeinfo);
 }
 

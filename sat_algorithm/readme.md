@@ -28,6 +28,9 @@ echo "Zx123456" | sudo -S git commit -m "暂时进行代码完全重构，将原
 
 echo "Zx123456" | sudo -S git add .
 echo "Zx123456" | sudo -S git commit -m "进行了重构"
+
+echo "Zx123456" | sudo -S git add .
+echo "Zx123456" | sudo -S git commit -m "修复了mktime过程中的空指针的bug"
 git push origin nsga-II
 ```
 
@@ -42,6 +45,8 @@ sudo apt upgrade
 sudo apt update
 sudo apt install g++
 sudo apt install build-essential
+sudo apt install gdb
+sudo apt install valgrind
 ```
 ## 安装gnuplot适配初始绘图工具，后期完成总体py绘图配置可以不进行这步
 ```
@@ -50,10 +55,10 @@ sudo apt install gnuplot
 ```
 ## 安装Python3.8
 ```
-sudo apt install python3
-apt install python3-pip
-pip3 install matplotlib
-sudo apt-get install python3-tk
+sudo -S sudo apt install python3
+sudo -S sudo apt install python3-pip
+sudo -S pip3 install matplotlib
+sudo -S sudo apt-get install python3-tk
 ```
 
 # 文件内容

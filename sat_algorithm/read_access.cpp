@@ -58,35 +58,35 @@ void parse_csv_line(char *line, struct AccessRecord *record) {
 }
 
 void init_time_windows(){
+    // vector<struct TimeWindow>tw_list(MAX_TARGET_NUM);
     string root_path = getExecuateParentPath();
     // string data_path = "/sat_data/Satellite-Satellite1-Sensor-Sensor1-To-Target-Target1_Access.csv";
     // string data_path = "/sat_data/2024-1-22-Satellite-Satellite1-Sensor-Sensor1-To-Target-Target1_Access.csv";
     string data_path = "sat_data/10-target-time-windows.csv";
     string filepath = root_path.append(data_path);
 
-    vector<string> start_s;
-    vector<string> stop_s;
-    vector<string> duration_s;
-    vector<string> target_no_s;
-
+    vector<string> start_s(MAX_TARGET_NUM);
+    vector<string> stop_s(MAX_TARGET_NUM);
+    vector<string> duration_s(MAX_TARGET_NUM);
+    vector<string> target_no_s(MAX_TARGET_NUM);
+    string line;
     ifstream inputFile(filepath); // 打开文件
     if (inputFile.is_open()) { // 检查文件是否成功打开
-        string line;
-
         int n = 0;
         int pos = 0;
-        while (std::getline(inputFile, line)) {
+        while (getline(inputFile, line)) {
+            // cout<<line<<endl;
             pos = line.find(',');
-            target_no_s.push_back(line.substr(0,pos));
+            target_no_s[n] = (line.substr(0,pos));
             line = line.substr(pos+1,line.size());
             pos = line.find(',');
-            start_s.push_back(line.substr(0,pos));
+            start_s[n] = (line.substr(0,pos));
             line = line.substr(pos+1,line.size());
             pos = line.find(',');
-            stop_s.push_back(line.substr(0,pos));        
+            stop_s[n] = (line.substr(0,pos));        
             line = line.substr(pos+1,line.size());
             pos = line.find(',');
-            duration_s.push_back(line.substr(0,pos));
+            duration_s[n] = (line.substr(0,pos));
             
             n+=1;
         }
@@ -94,20 +94,21 @@ void init_time_windows(){
     } else {
         std::cerr << "Unable to open file" << std::endl;
     }
+    // printf("the length of the inputfile is:%d\n",stop_s.size());
     for(int i=0;i<MAX_TARGET_NUM;i++){
         tw_list[i].target_no=stoi(target_no_s[i]);
         tw_list[i].start_time=tm_to_seconds(start_s[i]);
         tw_list[i].stop_time =tm_to_seconds(stop_s[i]);
         tw_list[i].durations=stoi(duration_s[i]);
 
-        // printf("info:%ld,%ld,%ld,%ld\n",
+        // printf("info:%d,%ld,%ld,%ld\n",
         // tw_list[i].target_no,
         // tw_list[i].start_time,
         // tw_list[i].stop_time,
         // tw_list[i].durations);
 
         // printf("%s,%s,%s,%s\n",target_no_s[i].data(),start_s[i].data(),stop_s[i].data(),duration_s[i].data());
-
+        
         // cout<<tm_to_seconds(start_s[i])<<"\n";
         // cout<<tm_to_seconds(stop_s[i])<<"\n";
     }

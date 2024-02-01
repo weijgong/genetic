@@ -96,6 +96,7 @@ int main(){
     int numMode = 0;
     read_sense_mode(&SenseModeArray,&numMode);
     init_time_windows();
+
     extend_time_windows();
     time_t earliest_time_start = (time_t)INFINITY;
     time_t slowes_time_stop = 0;
@@ -106,7 +107,6 @@ int main(){
         if(slowes_time_stop<tw_list[i].stop_time){
             slowes_time_stop = tw_list[i].stop_time;
         }
-
     }
 
     // cout<<"最早的时间窗口开始时间为："<<earliest_time_start<<endl;
@@ -116,6 +116,7 @@ int main(){
     for(int i = 0;i<MAX_TARGET_NUM;i++){
         tw_list[i].start_time -= earliest_time_start;
         tw_list[i].stop_time  -= earliest_time_start;
+
         // printf("Start:%ld,end:%ld,duration:%ld\n",tw_list[i].start_time,tw_list[i].stop_time,tw_list[i].durations);
     }   
 
@@ -129,7 +130,7 @@ int main(){
     vector<Individual> population = algo.initializePopulation(SenseModeArray);
     Individual best_ind = algo.Tournament(population);
     algo.nout_individual(best_ind);
-/*
+
     int poolNumber = 2;
     
     for(int epoch = 0;epoch < generation_number; epoch ++){
@@ -265,7 +266,7 @@ int main(){
     fclose(vtw_ow_fileP);
     free(SenseModeArray);
     return 0;
-*/
+// */
 }
 
 
