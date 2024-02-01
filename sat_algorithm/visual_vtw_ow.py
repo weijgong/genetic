@@ -16,7 +16,7 @@ for i in lines:
     vtws.append([tmp[0],tmp[1]])
     ows.append([tmp[2],tmp[3]])
     mode.append(tmp[4])
-    print(tmp)
+    # print(tmp)
 # print(vtws,ows,mode)
 # barh_param: y,width,height,left
 barh_param = [[],[],[],[],[]]
@@ -50,10 +50,39 @@ plt.barh(
     color = barh_param[4],
     label = ['visual windows','observe windows']+["" for i in range(len(barh_param[0])-2)]
     )
+
+lines = []
+free_windows = []
+with open("/home/gwj/genetic/sat_algorithm/free_time_windows_data.dat",'r') as f:
+    lines = f.readlines()
+for i in lines:
+    tmp = i.strip('\n').split(',')
+    tmp = [float(j) for j in tmp]
+    free_windows.append(tmp)
+
+cur_left = 0
+for i in range(len(free_windows)):
+    print(free_windows[i])
+    left_  = free_windows[i][0]
+    width_ = free_windows[i][1] - free_windows[i][0]
+    if i == 0:
+        label_ = ['free observation windows']
+    else:
+        label_ = ['']
+    plt.barh(
+    y=barh_param[0][-1]+1.5,
+    width=width_,
+    height=0.8,
+    left=left_,
+    align='center',
+    color = 'b',
+    label = label_
+    )
+
 plt.grid()
 plt.legend(prop={'size': 6})
 plt.title("satellite schedule")
 plt.xlabel("Timeline")
 plt.ylabel("target no")
-plt.yticks(barh_param[0],labels=ticks_y)
+plt.yticks(barh_param[0]+[barh_param[0][-1]+1.5],labels=ticks_y+['Free windows'])
 plt.savefig("/home/gwj/genetic/sat_algorithm/visual_vtw_ows.png")

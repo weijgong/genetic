@@ -214,7 +214,7 @@ int main(){
     vector<int>     unsch_task_index(MAX_TARGET_NUM);                    // 存储未调度任务的下标
     vector<int>       sch_task_index(MAX_TARGET_NUM);                    // 存储调度任务的下标
     
-    int start = 0;
+    double start = 0;
     int free_tw_cnt=0;
     vector<vector<double>> interval_free;
     vector<double>tmps;
@@ -232,17 +232,18 @@ int main(){
     sort_ow_in_reg_Arrive(task_seting,task_seting.size());
     for(int i=0;i<MAX_TARGET_NUM;i++){
         if(task_seting[i][4]==0)continue;
-        if(task_seting[i][3]-task_seting[i][2]<0.5)continue;
-        tmps.push_back(start);
-        tmps.push_back(task_seting[i][2]);
-        interval_free.push_back(tmps);
-        vector<double>().swap(tmps);
+        if(task_seting[i][2]-start>=0.5){
+            tmps.push_back(start);
+            tmps.push_back(task_seting[i][2]);
+            interval_free.push_back(tmps);
+            vector<double>().swap(tmps);
+            fprintf(free_twP, "%f,%f\n",interval_free[free_tw_cnt][0],interval_free[free_tw_cnt][1]);
+            free_tw_cnt+=1;
+        }
         start=task_seting[i][3];
-        fprintf(free_twP, "%f,%f\n",interval_free[free_tw_cnt][0],interval_free[free_tw_cnt][1]);
-        free_tw_cnt+=1;
     }
     tmps.push_back(start);
-    tmps.push_back(slowes_time_stop);
+    tmps.push_back(slowes_time_stop-earliest_time_start);
     interval_free.push_back(tmps);
     vector<double>().swap(tmps);
     fprintf(free_twP, "%f,%f\n",interval_free[free_tw_cnt][0],interval_free[free_tw_cnt][1]);
@@ -257,7 +258,7 @@ int main(){
 
     for(int i=0;i<MAX_TARGET_NUM;i++){
         if(task_seting[i][4]==0)unsch_task_index.push_back(i);
-        else sch_task_index.push_back(i);
+        else sch_task_index.push_back(i);        
     }
 
     // *********************************** Re Schedule Process End ***********************************
