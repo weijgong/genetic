@@ -34,6 +34,9 @@ echo "Zx123456" | sudo -S git commit -m "修复了mktime过程中的空指针的
 
 echo "Zx123456" | sudo -S git add .
 echo "Zx123456" | sudo -S git commit -m "添加了时间窗的绘图"
+
+echo "Zx123456" | sudo -S git add .
+echo "Zx123456" | sudo -S git commit -m "实现了重调度的算法"
 git push origin nsga-II
 ```
 

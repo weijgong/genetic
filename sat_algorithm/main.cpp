@@ -18,6 +18,8 @@ void sort_in_reg_Arrive(vector<vector<double>> &arr,int size_);
 void sort_ow_in_reg_Arrive(vector<vector<double>> &arr,int size_);
 void quick_sort_by_arrive(vector<vector<double>> &arr, int start, int end);
 void quick_sort_by_ow_arrive(vector<vector<double>> &arr, int start, int end);
+void sort_target_no(vector<vector<double>> &arr,int size_);
+void quick_sort_by_target_no(vector<vector<double>> &arr, int start, int end);
 
 struct TimeWindow tw_list [MAX_TARGET_NUM];
 struct Position   pos_list[MAX_TARGET_NUM];
@@ -36,6 +38,30 @@ void sort_in_reg_Arrive(vector<vector<double>> &arr,int size_){
 
 void sort_ow_in_reg_Arrive(vector<vector<double>> &arr,int size_){
     quick_sort_by_ow_arrive(arr,0,size_-1);
+}
+
+void sort_target_no(vector<vector<double>> &arr,int size_){
+    quick_sort_by_target_no(arr,0,size_-1);
+}
+
+void quick_sort_by_target_no(vector<vector<double>> &arr, int start, int end) {
+    if (start >= end)
+        return;
+    vector<double> mid = arr[end];
+    int left = start, right = end - 1;
+    while (left < right) {
+        while (!compare_by_idx(arr[left],mid,5) && left < right)
+            left++;
+        while (compare_by_idx(arr[right],mid,5) && left < right)
+            right--;
+        swap(arr[left], arr[right]);
+    }
+    if (compare_by_idx(arr[left],arr[end],5))
+        swap(arr[left], arr[end]);
+    else
+        left++;
+    quick_sort_by_target_no(arr, start, left - 1);
+    quick_sort_by_target_no(arr, left + 1, end);
 }
 
 void quick_sort_by_ow_arrive(vector<vector<double>> &arr, int start, int end) {
@@ -190,14 +216,9 @@ int main(){
     
     fclose(vtw_ow_fileP);
 
-    FILE *rescheduled_vtw_ow_fileP;
+    
     FILE *free_twP;
-    rescheduled_vtw_ow_fileP = fopen("/home/gwj/genetic/sat_algorithm/rescheduled_time_windows_data.dat", "w");
     free_twP = fopen("/home/gwj/genetic/sat_algorithm/free_time_windows_data.dat", "w");
-    if (rescheduled_vtw_ow_fileP == nullptr) {
-        std::cerr << "Error opening file!" << std::endl;
-        return 1;
-    }
     
     if (free_twP == nullptr) {
         std::cerr << "Error opening file!" << std::endl;
@@ -210,11 +231,10 @@ int main(){
 
 
     // *********************************** Re Schedule Process Start ***********************************
-    vector<vector<double>>task_seting;
-    vector<int>     unsch_task_index(MAX_TARGET_NUM);                    // 存储未调度任务的下标
-    vector<int>       sch_task_index(MAX_TARGET_NUM);                    // 存储调度任务的下标
+    vector<vector<double>>task_seting;                                   // (vtw_s,vtw_e,ow_s,ow_e,mode,target_no)
     
     double start = 0;
+    int pos = 0;
     int free_tw_cnt=0;
     vector<vector<double>> interval_free;
     vector<double>tmps;
@@ -228,6 +248,8 @@ int main(){
         task_seting.push_back(tmps);
         vector<double>().swap(tmps);
     }
+
+    // vector<vector<double>>task_seting_by_no = task_seting;   
 
     sort_ow_in_reg_Arrive(task_seting,task_seting.size());
     for(int i=0;i<MAX_TARGET_NUM;i++){
@@ -247,18 +269,70 @@ int main(){
     interval_free.push_back(tmps);
     vector<double>().swap(tmps);
     fprintf(free_twP, "%f,%f\n",interval_free[free_tw_cnt][0],interval_free[free_tw_cnt][1]);
-    for(int i=0;i<interval_free.size();i++){
-        printf("%f,%f\n",interval_free[i][0],interval_free[i][1]);
-    }
+
 
     // 三种排序方法：到达时间优先、截止时间优先、等待时间优先
     // 按照vtws开始时间进行排序
     // Regulation AI:
     sort_in_reg_Arrive(task_seting,task_seting.size());
-
+    vector<vector<double>> interval_free_resch = interval_free;
+    vector<int>     unsch_task_index;                    // 存储未调度任务的下标
+    vector<int>       sch_task_index;                    // 存储调度任务的下标
     for(int i=0;i<MAX_TARGET_NUM;i++){
         if(task_seting[i][4]==0)unsch_task_index.push_back(i);
-        else sch_task_index.push_back(i);        
+        else sch_task_index.push_back(i);
+    }
+
+    vector<vector<int>> incident_windows(unsch_task_index.size());
+    for(int i=unsch_task_index.size()-1;i>=0;i--){
+        double cur_s,cur_e;
+        double best_wci=0,cur_wci=0;
+        double best_windows_index = -1;
+        cur_s = task_seting[unsch_task_index[i]][0];
+        cur_e = task_seting[unsch_task_index[i]][1];
+        for(int j=0;j<interval_free_resch.size();j++){
+            cur_wci = min(cur_e,interval_free_resch[j][1]) - max(cur_s,interval_free_resch[j][0]);
+            if(cur_wci >= 0.5){
+                // 满足条件的时间窗口属于正常的
+                // incident_windows[i].push_back(j);
+                if(cur_wci>=best_wci){
+                    best_wci = cur_wci;
+                    best_windows_index = j;
+                }
+            }
+        }
+        if(best_windows_index!=-1){
+            task_seting[unsch_task_index[i]][2]=max(interval_free_resch[best_windows_index][0],
+                                                    task_seting[unsch_task_index[i]][2]);
+            task_seting[unsch_task_index[i]][3]=task_seting[unsch_task_index[i]][2]+0.5;
+            task_seting[unsch_task_index[i]][4]=3;
+            interval_free_resch[best_windows_index][0]+=0.5;
+            if(interval_free_resch[best_windows_index][1]-interval_free_resch[best_windows_index][0]<=0.5){
+                interval_free_resch.erase(interval_free_resch.begin()+best_windows_index);    
+            }        
+            unsch_task_index.erase(unsch_task_index.begin()+i);
+        }
+    }
+    
+    FILE *rescheduled_vtw_ow_fileP;
+    rescheduled_vtw_ow_fileP = fopen("/home/gwj/genetic/sat_algorithm/rescheduled_time_windows_data.dat", "w");
+
+    if (rescheduled_vtw_ow_fileP == nullptr) {
+        std::cerr << "Error opening file!" << std::endl;
+        return 1;
+    }
+    sort_target_no(task_seting,task_seting.size());
+    for(int i=0;i<MAX_TARGET_NUM;i++){
+        for(int j=0;j<6;j++){
+            printf("%f\t",task_seting[i][j]);
+        }
+        fprintf(rescheduled_vtw_ow_fileP, "%f,%f,%f,%f,%f\n",
+        task_seting[i][0],
+        task_seting[i][1],
+        task_seting[i][2],
+        task_seting[i][3],
+        task_seting[i][4]);
+        printf("\n");
     }
 
     // *********************************** Re Schedule Process End ***********************************
@@ -270,6 +344,61 @@ int main(){
 // */
 }
 
+/*
+    vector<double> wci_task_i_windows_j;
+    for(int i=0;i<incident_windows.size();i++){
+        double cur_s,cur_e;
+        cur_s = task_seting[unsch_task_index[i]][0];
+        cur_e = task_seting[unsch_task_index[i]][1];
+        // cout<<"incident_windows[i] size is "<<incident_windows[i].size()<<"\t";
+        // cout<<"target no is "<<task_seting[unsch_task_index[i]][5]<<":\t";
+        for(int j=0;j<incident_windows[i].size();j++){
+            cout<<incident_windows[i][j]<<"\t";
+            cout<<"wci->"<<min(cur_e,interval_free[incident_windows[i][j]][1]) - max(cur_s,interval_free[incident_windows[i][j]][0])<<"\t";
+            wci_task_i_windows_j.push_back(min(cur_e,interval_free[j][1]) - max(cur_s,interval_free[j][0]));
+        }
+        cout<<"\n";
+    }
+*/
+
+/*
+    for(int i=0;i<interval_free.size();i++){
+        printf("%f,%f\n",interval_free[i][0],interval_free[i][1]);
+    }
+
+    vector<vector<vector<double>>> incident_windows(unsch_task_index.size(),
+    vector<vector<double>>(interval_free.size(),vector<double>(2)));
+    printf("incident windows size=%d,unsch_task_index windows size=%d\n",
+        incident_windows.size(),unsch_task_index.size());
+    for(int i=0;i<incident_windows.size();i++)
+        for(int j=0;j<interval_free.size();j++)
+            for(int k=0;k<2;k++)
+                incident_windows[i][j][k] = interval_free[j][k];
+    for(int i=0;i<incident_windows.size();i++){
+        for(int j=0;j<incident_windows[0].size();j++){
+            printf("%f~%f\t",incident_windows[i][j][0],incident_windows[i][j][1]);
+        }
+        printf("\n");
+    }
+
+
+    for(int i=0;i<incident_windows.size();i++){
+        sort(deleted_windows[i].begin(), deleted_windows[i].end(), greater<size_t>());
+        for (size_t index : deleted_windows[i]) {
+            if (index < incident_windows[i].size()) {
+                incident_windows[i].erase(incident_windows[i].begin() + index);
+            }
+        }
+    }
+
+    for(int i=0;i<incident_windows.size();i++){
+        printf("%f:\t", task_seting[unsch_task_index[i]][5]);
+        for(int j=0;j<incident_windows[0].size();j++){
+            printf("%f~%f\t",incident_windows[i][j][0],incident_windows[i][j][1]);
+        }
+        printf("\n");
+    }
+*/ 
 
 /*
     plot_target_windows("all_access_timewindows.png",earliest_time_start,slowes_time_stop);
