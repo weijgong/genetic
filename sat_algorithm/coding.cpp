@@ -51,9 +51,15 @@ void EvaluationCode::exec_central_window(){
         this->real_finish_time = central_time + this->observe_time/2;
     }
     else{
+    /*
+    //  初版代码采用的随机区间位置进行的处理
         this->real_start_time  = (double)rand()/RAND_MAX * (this->window.durations-this->observe_time)
                                  + this->window.start_time;
         this->real_finish_time = this->real_start_time + this->observe_time;
+    */
+    //  在外部完成所有0 1 2模式编码后再对3模式进行窗口编码
+        this->real_start_time  = this->window.start_time;
+        this->real_finish_time = this->window.start_time;
     }
 
     // 版本1的代码，需要用到mode,不能直接通过decode求，修改成只需要decode的

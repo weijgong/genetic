@@ -19,6 +19,14 @@ typedef struct Individual {
     double fitness;
 }Individual;
 
+bool compare_by_idx(vector<double> a,vector<double> b,int idx);
+void sort_in_reg_Arrive(vector<vector<double>> &arr,int size_);
+void sort_ow_in_reg_Arrive(vector<vector<double>> &arr,int size_);
+void quick_sort_by_arrive(vector<vector<double>> &arr, int start, int end);
+void quick_sort_by_ow_arrive(vector<vector<double>> &arr, int start, int end);
+void sort_target_no(vector<vector<double>> &arr,int size_);
+void quick_sort_by_target_no(vector<vector<double>> &arr, int start, int end);
+
 
 // 绘制任意个体的时序图
 void plot_individual(Individual ec,int earliest_time_start,int slowes_time_stop);

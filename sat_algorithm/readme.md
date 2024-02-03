@@ -37,6 +37,9 @@ echo "Zx123456" | sudo -S git commit -m "添加了时间窗的绘图"
 
 echo "Zx123456" | sudo -S git add .
 echo "Zx123456" | sudo -S git commit -m "实现了重调度的算法"
+
+echo "Zx123456" | sudo -S git add .
+echo "Zx123456" | sudo -S git commit -m "replace the origin schedule algorithm of mode 3"
 git push origin nsga-II
 ```
 

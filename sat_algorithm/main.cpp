@@ -13,13 +13,7 @@
 
 using namespace std;
 void nout_individual_gene(Individual ind);
-bool compare_by_idx(vector<double> a,vector<double> b,int idx);
-void sort_in_reg_Arrive(vector<vector<double>> &arr,int size_);
-void sort_ow_in_reg_Arrive(vector<vector<double>> &arr,int size_);
-void quick_sort_by_arrive(vector<vector<double>> &arr, int start, int end);
-void quick_sort_by_ow_arrive(vector<vector<double>> &arr, int start, int end);
-void sort_target_no(vector<vector<double>> &arr,int size_);
-void quick_sort_by_target_no(vector<vector<double>> &arr, int start, int end);
+
 
 struct TimeWindow tw_list [MAX_TARGET_NUM];
 struct Position   pos_list[MAX_TARGET_NUM];
@@ -112,6 +106,7 @@ void nout_individual_gene(Individual ind){
 }
 
 int main(){
+    
     srand((unsigned)time(NULL));
     Sense_mode *SenseModeArray = NULL;
 
@@ -283,7 +278,6 @@ int main(){
         else sch_task_index.push_back(i);
     }
 
-    vector<vector<int>> incident_windows(unsch_task_index.size());
     for(int i=unsch_task_index.size()-1;i>=0;i--){
         double cur_s,cur_e;
         double best_wci=0,cur_wci=0;
