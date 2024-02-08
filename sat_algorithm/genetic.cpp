@@ -184,9 +184,10 @@ Individual GeneticAlgorithm::RepairUnfeasibleSolution(Individual ec){
 // 获取随机基因
 vector<EvaluationCode> GeneticAlgorithm::getRandomGene(Sense_mode *SenseModeArray) {
     vector<EvaluationCode>ec_simple(MAX_TARGET_NUM);
+    vector<int> priors = init_priority();
     for(int i = 0;i < MAX_TARGET_NUM; i++){
         // 种群初始化
-        ec_simple[i].init_individual(SenseModeArray,i);
+        ec_simple[i].init_individual(SenseModeArray,i,priors);
     }
     return ec_simple;
 }
@@ -205,10 +206,15 @@ vector<Individual> GeneticAlgorithm::initializePopulation(Sense_mode *SenseModeA
 }
 
 void GeneticAlgorithm::nout_individual(Individual ec){
-    cout<<"St\tFt\tfitness\tencode"<<endl;
+    cout<<"St\tFt\tfitness\tencode\tpriority"<<endl;
     for(int i = 0;i < MAX_TARGET_NUM;i ++){
-        printf("%.2f\t%.2f\t%.2f\t%d\n",
-        ec.genes[i].real_start_time,ec.genes[i].real_finish_time,ec.fitness,ec.genes[i].pop_main_decode);
+        printf("%.2f\t%.2f\t%.2f\t%d\t%d\n",
+        ec.genes[i].real_start_time,
+        ec.genes[i].real_finish_time,
+        ec.fitness,
+        ec.genes[i].pop_main_decode,
+        ec.genes[i].prior_of_task
+        );
     }
 }
 
@@ -223,23 +229,28 @@ void GeneticAlgorithm::abort_population(vector<Individual>Population){
 double GeneticAlgorithm::calculateFitness(Individual ec) {
     double fitness = 0;
     int observed_target_num=0;
+    double priority_fit=0;
     for(int i = 0; i < MAX_TARGET_NUM; i ++){
         if(ec.genes[i].pop_main_decode==0){            
         }
         else if(ec.genes[i].pop_main_decode==1){
             fitness+=10;
             observed_target_num+=1;
+            priority_fit += ec.genes[i].prior_of_task;
         }
         else if(ec.genes[i].pop_main_decode==2){
             fitness+=5;
             observed_target_num+=1;
+            priority_fit += ec.genes[i].prior_of_task;
         }
         else if(ec.genes[i].pop_main_decode==3){
             fitness+=1;
             observed_target_num+=1;
+            priority_fit += ec.genes[i].prior_of_task;
         }
     }
     fitness += observed_target_num;
+    fitness += priority_fit;
     return fitness;
 }
 

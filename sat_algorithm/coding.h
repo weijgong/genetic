@@ -29,6 +29,7 @@
 class EvaluationCode{
     public:
         // parameter
+        int prior_of_task;
         int target_no;
         double real_start_time;
         double real_finish_time;
@@ -48,7 +49,7 @@ class EvaluationCode{
         void nout_time_proc();
         void set_mode(Sense_mode *SenseModeArray);
         // 个体初始化
-        void init_individual(Sense_mode *SenseModeArray,int target_no);
+        void init_individual(Sense_mode *SenseModeArray,int target_no,vector<int> priors);
 };
 
 // 生成初始种群

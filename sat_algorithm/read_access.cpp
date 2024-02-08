@@ -57,6 +57,26 @@ void parse_csv_line(char *line, struct AccessRecord *record) {
     record->duration = atoi(token);
 }
 
+vector<int> init_priority(){
+    vector<int> priors(MAX_TARGET_NUM);
+    string root_path = getExecuateParentPath();
+    string data_path = "sat_data/priority.csv";
+    string filepath = root_path.append(data_path);
+    ifstream inputFile(filepath);
+    if (inputFile.is_open()) { // 检查文件是否成功打开
+        string line;
+        int i=0;
+        while (getline(inputFile, line)) {
+            priors[i] = stoi(line);
+            i++;
+        }
+        inputFile.close();
+    } else {
+        std::cerr << "Unable to open file" << std::endl;
+    }
+    return priors;
+}
+
 void init_time_windows(){
     // vector<struct TimeWindow>tw_list(MAX_TARGET_NUM);
     string root_path = getExecuateParentPath();

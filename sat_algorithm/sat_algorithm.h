@@ -19,6 +19,8 @@
 #include <bits/stdc++.h>
 #include <unistd.h>
 
+#include <chrono>
+
 using namespace std;
 
 #define MAX_LINE_LENGTH 256
@@ -105,6 +107,8 @@ double tm_to_mjd(string date_);
 time_t tm_to_seconds(string date_);
 // 读取时间窗口，并将其赋值到tw_list中
 void init_time_windows();
+// 读取目标优先级
+vector<int> init_priority();
 // 读取时间窗口的文件
 void parse_csv_line(char *line, struct AccessRecord *record);
 // 将时间窗口进行长度扩展，便于后续进行调度

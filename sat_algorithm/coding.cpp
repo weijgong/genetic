@@ -11,11 +11,11 @@
 
 using namespace std;
 
-void EvaluationCode::init_individual(Sense_mode *SenseModeArray,int target_no){
+void EvaluationCode::init_individual(Sense_mode *SenseModeArray,int target_no,vector<int> priors){
     
     this->exec_satellite_index = 0;
     this->target_no = target_no;
-
+    this->prior_of_task = priors[target_no];
     this->pop_main_decode =rand()%MainCoding_CASE;
     this->pop_main = encode_main_code(this->pop_main_decode);
     

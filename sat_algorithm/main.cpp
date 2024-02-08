@@ -12,12 +12,15 @@
 #include "genetic.h"
 
 using namespace std;
+using namespace std::chrono;
 void nout_individual_gene(Individual ind);
 
 
 struct TimeWindow tw_list [MAX_TARGET_NUM];
 struct Position   pos_list[MAX_TARGET_NUM];
 struct SteoCord   cor_list[MAX_TARGET_NUM];
+
+
 
 bool compare_by_idx(vector<double> a,vector<double> b,int idx){
     if(a[idx]>=b[idx]){
@@ -107,6 +110,8 @@ void nout_individual_gene(Individual ind){
 
 int main(){
     
+    auto start_time = high_resolution_clock::now();
+    
     srand((unsigned)time(NULL));
     Sense_mode *SenseModeArray = NULL;
 
@@ -139,7 +144,8 @@ int main(){
         tw_list[i].stop_time  -= earliest_time_start;
 
         // printf("Start:%ld,end:%ld,duration:%ld\n",tw_list[i].start_time,tw_list[i].stop_time,tw_list[i].durations);
-    }   
+    }
+
 
     // *********************************** Evolve Process ***********************************
     int populationSize = 100;
@@ -330,8 +336,11 @@ int main(){
     }
 
     // *********************************** Re Schedule Process End ***********************************
-    
-    
+    auto end_time = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(end_time - start_time);
+ 
+    cout << "Time taken by function: "
+         << duration.count() << " microseconds" << endl;
     fclose(vtw_ow_fileP);
     free(SenseModeArray);
     return 0;
