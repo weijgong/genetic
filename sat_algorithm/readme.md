@@ -40,6 +40,11 @@ echo "Zx123456" | sudo -S git commit -m "实现了重调度的算法"
 
 echo "Zx123456" | sudo -S git add .
 echo "Zx123456" | sudo -S git commit -m "replace the origin schedule algorithm of mode 3"
+
+echo "Zx123456" | sudo -S git add .
+echo "Zx123456" | sudo -S git commit -m "增加了优先级计算算法"
+
+
 git push origin nsga-II
 ```
 

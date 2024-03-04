@@ -27,6 +27,7 @@ bool compare_by_idx(vector<double> a,vector<double> b,int idx){
         return true;
     }
     else return false;
+    
 }
 
 void sort_in_reg_Arrive(vector<vector<double>> &arr,int size_){
@@ -217,14 +218,6 @@ int main(){
     
     fclose(vtw_ow_fileP);
 
-    
-    FILE *free_twP;
-    free_twP = fopen("/home/gwj/genetic/sat_algorithm/free_time_windows_data.dat", "w");
-    
-    if (free_twP == nullptr) {
-        std::cerr << "Error opening file!" << std::endl;
-        return 1;
-    }
 
     // plot_target_windows("all_access_timewindows.png",earliest_time_start,slowes_time_stop);
     // plot_individual_with_name("best_pop_in_simple_genetic.png",best_ind,earliest_time_start,slowes_time_stop);
@@ -250,7 +243,24 @@ int main(){
         vector<double>().swap(tmps);
     }
 
+    FILE *free_twP;
+    FILE *observe_seqP;
+    // 存储空闲时间窗口
+    free_twP = fopen("/home/gwj/genetic/sat_algorithm/free_time_windows_data.dat", "w");
+    // 存储未进行重规划实际观测顺序
+    observe_seqP = fopen("/home/gwj/genetic/sat_algorithm/observe_sequence.dat","w");
+    if (free_twP == nullptr) {
+        std::cerr << "Error opening file:free_time_windows_data.dat!" << std::endl;
+        return 1;
+    }
+    if (observe_seqP == nullptr) {
+        std::cerr << "Error opening file:observe_sequence.dat!" << std::endl;
+        return 1;
+    }
+
+
     // vector<vector<double>>task_seting_by_no = task_seting;   
+    vector<int> fact_observe_sequence(MAX_TARGET_NUM);
 
     sort_ow_in_reg_Arrive(task_seting,task_seting.size());
     for(int i=0;i<MAX_TARGET_NUM;i++){
@@ -262,6 +272,8 @@ int main(){
             vector<double>().swap(tmps);
             fprintf(free_twP, "%f,%f\n",interval_free[free_tw_cnt][0],interval_free[free_tw_cnt][1]);
             free_tw_cnt+=1;
+            fact_observe_sequence[i] = task_seting[i][5];
+            fprintf(observe_seqP, "%d\n",fact_observe_sequence[i]);
         }
         start=task_seting[i][3];
     }
