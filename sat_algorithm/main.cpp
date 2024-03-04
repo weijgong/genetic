@@ -244,20 +244,20 @@ int main(){
     }
 
     FILE *free_twP;
-    FILE *observe_seqP;
+   
     // 存储空闲时间窗口
     free_twP = fopen("/home/gwj/genetic/sat_algorithm/free_time_windows_data.dat", "w");
+    FILE *observe_seqP;
     // 存储未进行重规划实际观测顺序
-    observe_seqP = fopen("/home/gwj/genetic/sat_algorithm/observe_sequence.dat","w");
-    if (free_twP == nullptr) {
-        std::cerr << "Error opening file:free_time_windows_data.dat!" << std::endl;
-        return 1;
-    }
+    observe_seqP = fopen("/home/gwj/genetic/sat_algorithm/unrescheduled_observe_sequence.dat","w");
     if (observe_seqP == nullptr) {
         std::cerr << "Error opening file:observe_sequence.dat!" << std::endl;
         return 1;
     }
-
+    if (free_twP == nullptr) {
+        std::cerr << "Error opening file:free_time_windows_data.dat!" << std::endl;
+        return 1;
+    }
 
     // vector<vector<double>>task_seting_by_no = task_seting;   
     vector<int> fact_observe_sequence(MAX_TARGET_NUM);
