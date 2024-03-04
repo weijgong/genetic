@@ -46,6 +46,9 @@ echo "Zx123456" | sudo -S git commit -m "增加了优先级计算算法"
 
 echo "Zx123456" | sudo -S git add .
 echo "Zx123456" | sudo -S git commit -m "存储未进行重规划实际观测顺序"
+
+echo "Zx123456" | sudo -S git add .
+echo "Zx123456" | sudo -S git commit -m "存储进行重规划后的实际观测顺序"
 git push origin nsga-II
 ```
 

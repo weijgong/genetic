@@ -247,15 +247,17 @@ int main(){
    
     // 存储空闲时间窗口
     free_twP = fopen("/home/gwj/genetic/sat_algorithm/free_time_windows_data.dat", "w");
+
+    if (free_twP == nullptr) {
+        std::cerr << "Error opening file:free_time_windows_data.dat!" << std::endl;
+        return 1;
+    }
+
     FILE *observe_seqP;
     // 存储未进行重规划实际观测顺序
     observe_seqP = fopen("/home/gwj/genetic/sat_algorithm/unrescheduled_observe_sequence.dat","w");
     if (observe_seqP == nullptr) {
         std::cerr << "Error opening file:observe_sequence.dat!" << std::endl;
-        return 1;
-    }
-    if (free_twP == nullptr) {
-        std::cerr << "Error opening file:free_time_windows_data.dat!" << std::endl;
         return 1;
     }
 
@@ -277,12 +279,14 @@ int main(){
         }
         start=task_seting[i][3];
     }
+    // 前面计算的都是两个ow之间的空闲时间，需要在最后添加上一个到最大观测时间的间隔
     tmps.push_back(start);
     tmps.push_back(slowes_time_stop-earliest_time_start);
     interval_free.push_back(tmps);
     vector<double>().swap(tmps);
     fprintf(free_twP, "%f,%f\n",interval_free[free_tw_cnt][0],interval_free[free_tw_cnt][1]);
-
+    fclose(free_twP);
+    fclose(observe_seqP);
 
     // 三种排序方法：到达时间优先、截止时间优先、等待时间优先
     // 按照vtws开始时间进行排序
@@ -334,9 +338,11 @@ int main(){
         return 1;
     }
     sort_target_no(task_seting,task_seting.size());
+    cout<<"重调度后结果如下：\n";
+    printf("TW_S\tTW_E\tOW_S\tOW_E\tmode\tTarget_No\n");
     for(int i=0;i<MAX_TARGET_NUM;i++){
         for(int j=0;j<6;j++){
-            printf("%f\t",task_seting[i][j]);
+            printf("%.2f\t",task_seting[i][j]);
         }
         fprintf(rescheduled_vtw_ow_fileP, "%f,%f,%f,%f,%f\n",
         task_seting[i][0],
@@ -346,6 +352,7 @@ int main(){
         task_seting[i][4]);
         printf("\n");
     }
+    fclose(rescheduled_vtw_ow_fileP);
 
     // *********************************** Re Schedule Process End ***********************************
     auto end_time = high_resolution_clock::now();
@@ -353,7 +360,21 @@ int main(){
  
     cout << "Time taken by function: "
          << duration.count() << " microseconds" << endl;
-    fclose(vtw_ow_fileP);
+    
+
+    FILE *resche_observe_seqP;
+    // 存储未进行重规划实际观测顺序
+    resche_observe_seqP = fopen("/home/gwj/genetic/sat_algorithm/rescheduled_observe_sequence.dat","w");
+    if (resche_observe_seqP == nullptr) {
+        std::cerr << "Error opening file:rescheduled_observe_sequence.dat!" << std::endl;
+        return 1;
+    }
+    sort_ow_in_reg_Arrive(task_seting,task_seting.size());
+    for(int i=0;i<MAX_TARGET_NUM;i++){
+        if(task_seting[i][4]==0)continue;
+        fprintf(observe_seqP, "%d\n",int(task_seting[i][5]));
+    }
+    fclose(observe_seqP);
     free(SenseModeArray);
     return 0;
 // */
