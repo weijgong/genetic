@@ -49,6 +49,9 @@ echo "Zx123456" | sudo -S git commit -m "存储未进行重规划实际观测顺
 
 echo "Zx123456" | sudo -S git add .
 echo "Zx123456" | sudo -S git commit -m "存储进行重规划后的实际观测顺序"
+
+echo "Zx123456" | sudo -S git add .
+echo "Zx123456" | sudo -S git commit -m "实现了地图上目标观测顺序可视化算法"
 git push origin nsga-II
 ```
 
