@@ -50,17 +50,17 @@ double Mjd(int Year, int Month, int Day, int Hour, int Min, double Sec)
   long    MjdMidnight;
   double  FracOfDay;
   int     b;
-
+  // 某些日历3.1是第一天，将两个月转到去年
   if (Month<=2) { Month+=12; --Year;}
-  
+  // 判断所采用的日历是什么类型的
   if ( (10000L*Year+100L*Month+Day) <= 15821004L )
     b = -2 + ((Year+4716)/4) - 1179;     // Julian calendar 
   else
     b = (Year/400)-(Year/100)+(Year/4);  // Gregorian calendar 
-    
+  // 计算了日期对应的修正儒略日，考虑了闰年、月份
   MjdMidnight = 365L*Year - 679004L + b + int(30.6001*(Month+1)) + Day;
+  // 计算当天的小数部分
   FracOfDay   = (Hour+Min/60.0+Sec/3600.0) / 24.0; 
-
   return MjdMidnight + FracOfDay;
 }
 

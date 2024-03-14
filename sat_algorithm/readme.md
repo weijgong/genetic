@@ -52,6 +52,12 @@ echo "Zx123456" | sudo -S git commit -m "存储进行重规划后的实际观测
 
 echo "Zx123456" | sudo -S git add .
 echo "Zx123456" | sudo -S git commit -m "实现了地图上目标观测顺序可视化算法"
+
+echo "Zx123456" | sudo -S git add .
+echo "Zx123456" | sudo -S git commit -m "拟合算法生成"
+
+echo "Zx123456" | sudo -S git add .
+echo "Zx123456" | sudo -S git commit -m "实现了切比雪夫轨道插值及预报算法"
 git push origin nsga-II
 ```
 

@@ -41,12 +41,13 @@ const double c_light   = 299792458.0;         // Speed of light  [m/s]; DE430
 
 // Equatorial radius and flattening
 const double R_Earth     =   6378.137e3;      // Radius Earth [m]; WGS-84
-const double RS_Earth    =   6356.755e3;      // µØÇòÍÖÇòµÄ°ë³¤ÖáºÍ°ë¶ÌÖáµÄ³¤¶È [m]
+const double RS_Earth    =   6356.755e3;      // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä°ë³¤ï¿½ï¿½Í°ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½ [m]
 const double f_Earth     = 1.0/298.257223563; // Flattening; WGS-84
 const double R_Sun       = 696000.0e3;        // Sun's radius [m]; DE430
 const double R_Moon      =   1738.0e3;        // Moon's radius [m]; DE430
 
 // Earth rotation (derivative of GMST at J2000; differs from inertial period by precession)
+// åœ°çƒè‡ªè½¬ï¼ˆGMSTåœ¨J2000çš„å¯¼æ•°;ä¸æƒ¯æ€§å‘¨æœŸçš„è¿›åŠ¨ä¸åŒï¼‰
 const double omega_Earth = 15.04106717866910/3600*Rad; // [rad/s]; WGS-84
 
 // Gravitational coefficient

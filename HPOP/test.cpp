@@ -207,7 +207,7 @@ void Ephemeris(const Vector& Y0, int N_Step, double Step, AuxParam p, Vector Eph
 // AccessWindows computation
 //
 //------------------------------------------------------------------------------
-int AccessWindowsPoint(Vector SatEci[], Vector SatEcef[], Geodetic Target, Vector Coe[], double Fov[], const int N_Step, const int MaxNumOrbit, double Sway, double Mjd_UTC, double ** AccessTime)
+int AccessWindowsPoint(Vector SatEci[], Vector SatEcef[], Geodetic Target, Vector Coe[], double Fov[], const int N_Step, const int MaxNumOrbit, double Sway, double Mjd_UTC, vector<vector<double>>& AccessTime)
 {
 	double CentralTime(Vector SatEcef[], int WindowTime[], Geodetic Target, int* CenTime);
 	int n = 0; //记录轨道圈数,+1
@@ -442,7 +442,7 @@ int AccessWindowsPoint(Vector SatEci[], Vector SatEcef[], Geodetic Target, Vecto
 	return num;
 }
 
-int AccessWindowsArea(Vector SatEci[], Vector SatEcef[], Geodetic Target[], Vector Coe[], double Fov[], const int N_Step, const int MaxNumOrbit, double Sway, double Mjd_UTC, double ** AccessTime) //区域目标的参数初始化及其时间窗口计算
+int AccessWindowsArea(Vector SatEci[], Vector SatEcef[], Geodetic Target[], Vector Coe[], double Fov[], const int N_Step, const int MaxNumOrbit, double Sway, double Mjd_UTC, vector<vector<double>>& AccessTime) //区域目标的参数初始化及其时间窗口计算
 {
 	double CentralTime(Vector SatEcef[], int WindowTime[], Geodetic Target, int* CenTime);
 	double PointsDistance(double lat1, double lon1, double lat2, double lon2); //声明
@@ -1366,12 +1366,14 @@ int main() {
 	// 循环对120颗卫星预报3小时轨道
 	for (int ii = 0; ii < Nsat; ii++)
 	{
+		// 读取年月日时分秒
 		inp >> temp; Ephyear = temp;
 		inp >> temp; Ephmonth = temp;
 		inp >> temp; Ephday = temp;
 		inp >> temp; Ephhour = temp;
 		inp >> temp; Ephmin = temp;
 		inp >> temp; Ephsec = temp;
+		// 拖拽区域、太阳区域、重力
 		inp >> temp; Areadrag = temp;
 		inp >> temp; Areasolar = temp;
 		inp >> temp; Mass = temp;
@@ -1384,8 +1386,11 @@ int main() {
 		// 设置初始历元状态 (Envisat)
 		Mjd_UTC = Mjd(Ephyear, Ephmonth, Ephday, Ephhour, Ephmin, Ephsec);
 		jd = Mjd_UTC + 2400000.5;
+		// 将修正侏儒日的小数部分转化为分钟，一天 24*60 min
 		mfme = 1440.0*(Mjd_UTC - floor(Mjd_UTC));
+		// 读取地球定向参数 earth orientation parameter
 		initeop(eoparr, jdeopstart);
+		// 初始化空间气候数据 space weather data
 		initspw(spwarr, jdspwstart);
 		findeopparam(jd, mfme, interp, eoparr, jdeopstart, dut1, dat, lod, xp, yp, ddpsi, ddeps, dx, dy, x, y, s, deltapsi, deltaeps);
 		// Initialize UT1-UTC and UTC-TAI time difference
@@ -1406,6 +1411,7 @@ int main() {
 		Aux.Drag = true;
 
 		// 调用Ephemeris函数计算轨道
+		// 星历计算
 		Ephemeris(Y0, N_Step, Step, Aux, EphAll[ii]);
 		fprintf(f, "%4d", ii); //输出卫星标号
 		fprintf(f, "\n");
@@ -1421,9 +1427,13 @@ int main() {
 			mjdtt = Mjd_UTC + (Step*i) / 86400.0 + IERS::TT_UTC(Mjd_UTC + (Step*i) / 86400.0) / 86400.0;
 			mjdutc = Mjd_UTC + (Step*i) / 86400.0;
 			mjdut1 = Mjd_UTC + (Step*i) / 86400.0 + IERS::UT1_UTC(Mjd_UTC + (Step*i) / 86400.0) / 86400.0;
+			// 给定日期从伪地球固定坐标到地球固定坐标的变换
 			po = PoleMatrix(mjdutc);
+			// 赤道坐标的进动变换
 			pp = PrecMatrix(MJD_J2000, mjdtt);
+			// 从平均赤道到真赤道和春分点的转变
 			nn = NutMatrix(mjdtt);
+			// 从真赤道和春分到地球赤道和格林威治子午线系统的转变
 			theta = GHAMatrix(mjdut1);
 			dtheta = (omega_Earth - 0.843994809*1e-9*lod)*ss*theta;
 			ee = po*theta*nn*pp;
@@ -1436,12 +1446,10 @@ int main() {
 			fprintf(f, "%4d/%02d/%02d-", Year, Month, Day);
 			fprintf(f, "%02d:%02d:%06.3f", Hour, Min, Sec);
 
-			for (int j = 0; j < 3; j++)
-			{
+			for (int j = 0; j < 3; j++){
 				fprintf(f, "%15.6f", ECIr(j));
 			}
-			for (int j = 0; j < 3; j++)
-			{
+			for (int j = 0; j < 3; j++){
 				fprintf(f, "%15.9f", ECIv(j));
 			}
 			fprintf(f, "\n");
@@ -1459,57 +1467,43 @@ int main() {
 	vector<Point>TargetArea(4);
 	Geodetic TarPoint; //定义点目标的经纬高
 	const int MaxNumOrbit = 25; //最大轨道圈数
-	// 定义输出窗口指针AcessTime
-	double ** AccessTime;
-	AccessTime = new double*[MaxNumOrbit];
-	for (int i = 0; i < MaxNumOrbit; i++)
-		AccessTime[i] = new double[16];
-	for (int i = 0; i < MaxNumOrbit; i++)
-		for (int j = 0; j < 16; j++)
-			AccessTime[i][j] = 0;
+	// 定义输出窗口指针AcessTime,这部分不太会指针，直接采用二维vector代替
+	vector<vector<double>> AccessTime(MaxNumOrbit,vector<double>(16,0));
 	int TotalNumAll = 0; //所有卫星对所有任务的时间窗口数量
 	int TotalNum[Nsat];
 	for (int i =0;i<Nsat;i++)
 		TotalNum[i] = 0; //单颗卫星对所有任务的总时间窗口数量
 	int SatName, TaskName;
 	Geodetic ** CovBoundary; //定义条带的二维数组
-        int WindowNum[Ntask];
-        for (int i =0;i<Ntask;i++)
+	int WindowNum[Ntask];
+	for (int i =0;i<Ntask;i++)
 		WindowNum[i] = 0; //单颗卫星对单个任务的时间窗口数量，
-        inp.open("Task.txt");
-	int AP; //判断是区域目标/点目标
+	inp.open("Task.txt");
+	int AP; //判断是区域目标/点目标，如果第一行是1，那么进行条带的预测
 	inp >> temp; AP = temp;
-        inp.close();
-        if (AP == 1)
-        {
-            // 将区域目标时间窗口和侧摆角度数据存储在AccessAreaAll文件中
-	    if ((f = fopen("AccessAreaAll.txt", "w+")) == NULL)
-	    {
-	        fprintf(stdin, "Can't open \"words\" file.\n");
-		exit(1);
-	    }
-        }
-	else
-        {
-            // 将点目标时间窗口和侧摆角度数据存储在AccessPointAll文件中
-	    if ((f = fopen("AccessPointAll.txt", "w+")) == NULL)
-	    {
-		fprintf(stdin, "Can't open \"words\" file.\n");
-		exit(1);
-	    }
-        }
-        // 计算时间窗口
-	for (int ii = 0; ii < Nsat; ii++)
-	{
+	inp.close();
+	if (AP == 1){
+		// 将区域目标时间窗口和侧摆角度数据存储在AccessAreaAll文件中
+		if ((f = fopen("AccessAreaAll.txt", "w+")) == NULL){
+			fprintf(stdin, "Can't open \"words\" file.\n");
+			exit(1);
+		}
+	}
+	else{
+		// 将点目标时间窗口和侧摆角度数据存储在AccessPointAll文件中
+		if ((f = fopen("AccessPointAll.txt", "w+")) == NULL){
+			fprintf(stdin, "Can't open \"words\" file.\n");
+			exit(1);
+		}
+	}
+	// 计算时间窗口
+	for (int ii = 0; ii < Nsat; ii++){
 		inp.open("Task.txt");
 		int species; //判断是区域目标/点目标
 		inp >> temp; species = temp;
-		if (species == 1)
-		{
-			for (int i = 0; i < AreaNtask; i++)
-			{
-				for (int k = 0; k < 4; k++)
-				{
+		if (species == 1){
+			for (int i = 0; i < AreaNtask; i++){
+				for (int k = 0; k < 4; k++){
 					// Task三个数据分别对应的：纬度、经度、高度
 					inp >> temp; TarArea[k].lat = temp* Rad; TargetArea[k].y = temp;
 					inp >> temp; TarArea[k].lon = temp* Rad; TargetArea[k].x = temp;
@@ -1550,7 +1544,7 @@ int main() {
 				{
 					fprintf(f, "%4d", TaskName);
 					fprintf(f, "%4d", SatName);
-					fprintf(f, "%9.3f ", AccessTime[j][15]);
+					fprintf(f, "%9.3f ",AccessTime[j][15]);
 					fprintf(f, "%6.f ", AccessTime[j][12]);
 					fprintf(f, "%6.f ", AccessTime[j][13]);
 					fprintf(f, "%6.f ", AccessTime[j][13] - AccessTime[j][12]);
@@ -1596,199 +1590,199 @@ int main() {
 		cout << "TimeWindow calculation for Satellite:" << ii << " is done." << endl;
 	}
 	fclose(f);
-        
-        // 定义调度时间窗口变量以及Access变量
-        int SchedSYear, SchedSMonth, SchedSDay, SchedSHour, SchedSMin, SchedFYear, SchedFMonth, SchedFDay, SchedFHour, SchedFMin;
+    cout<<"时间窗口获取完成"<<endl;
+
+
+	/*
+	// 定义调度时间窗口变量以及Access变量
+	int SchedSYear, SchedSMonth, SchedSDay, SchedSHour, SchedSMin, SchedFYear, SchedFMonth, SchedFDay, SchedFHour, SchedFMin;
 	double SchedSSec, SchedFSec;
 	int SchedNum = 0;
 	double ** Access;
 	Access = new double*[TotalNumAll];
-        // 根据时间窗口分配任务
-        if (AP == Ntask) //多个点目标任务
-        {
-			//输出点目标规划的结果
-			if ((f = fopen("result_spot.txt", "w+")) == NULL)
-			{
-				fprintf(stdin, "Can't open \"words\" file.\n");
-				exit(1);
-			}
-			fprintf(f, "task  sat  slewangle    starttime      finishtime");
-			fprintf(f, "\n");
-            cout << "PointTargets plan:" << endl;
-	    for (int i = 0; i < TotalNumAll; i++)
-		Access[i] = new double[6];
-	    inp.open("AccessPointAll.txt"); //读取Access数据
-            cout << "All the TimeWindow data:" << endl;
-            cout << "TaskID " << "SatID " << "Swayangle " << "StartTime" << "EndTime " << "Duration " << endl;
-	    for (int i = 0; i < TotalNumAll; i++)
-	    {
-		for (int j = 0; j < 6; j++)
+	// 根据时间窗口分配任务
+	if (AP == Ntask) //多个点目标任务
+	{
+		//输出点目标规划的结果
+		if ((f = fopen("result_spot.txt", "w+")) == NULL)
 		{
+			fprintf(stdin, "Can't open \"words\" file.\n");
+			exit(1);
+		}
+		fprintf(f, "task  sat  slewangle    starttime      finishtime");
+		fprintf(f, "\n");
+		cout << "PointTargets plan:" << endl;
+		for (int i = 0; i < TotalNumAll; i++)
+		Access[i] = new double[6];
+		inp.open("AccessPointAll.txt"); //读取Access数据
+			cout << "All the TimeWindow data:" << endl;
+			cout << "TaskID " << "SatID " << "Swayangle " << "StartTime" << "EndTime " << "Duration " << endl;
+		for (int i = 0; i < TotalNumAll; i++){
+		for (int j = 0; j < 6; j++){
 			inp >> temp;
 			Access[i][j] = temp;
 			cout << Access[i][j] << " ";
+			}
+			cout << endl;
 		}
-		cout << endl;
-	    }
-	    inp.close();
-	    SortAcess(Access, TotalNumAll, AP); // 对时间窗口数据按结束时间最小进行由小到大排序
-	    double ** Sched;
-	    Sched = new double*[TotalNumAll];
-	    for (int i = 0; i < TotalNumAll; i++)
-		Sched[i] = new double[6];
-	    SchedNum = GreedySchedule(Nsat, Ntask, TotalNumAll, Access, Sched);
-	    for (int i = 0; i < SchedNum; i++)
-	    {
-		CalDat((Mjd_UTC + (Step*Sched[i][3]) / 86400.0), SchedSYear, SchedSMonth, SchedSDay, SchedSHour, SchedSMin, SchedSSec);
-		CalDat((Mjd_UTC + (Step*Sched[i][4]) / 86400.0), SchedFYear, SchedFMonth, SchedFDay, SchedFHour, SchedFMin, SchedFSec);
-		cout << "Task " << Sched[i][0] << " is executed by satellite " << Sched[i][1] << ",and its swayangle is " << Sched[i][2];
-		cout << ".StratTime is ";
-		printf("%4d/%02d/%02d-", SchedSYear, SchedSMonth, SchedSDay);
-		printf("%02d:%02d:%06.3f", SchedSHour, SchedSMin, SchedSSec);
-		cout << ",EndTime is ";
-		printf("%4d/%02d/%02d-", SchedFYear, SchedFMonth, SchedFDay);
-		printf("%02d:%02d:%06.3f", SchedFHour, SchedFMin, SchedFSec);
-		cout << "." << endl;
-		// 输出最终结果到result
-		fprintf(f, "%4d", (int)Sched[i][0]); //输出任务、卫星、角度
-                fprintf(f, " ");
-                fprintf(f, "%4d", (int)Sched[i][1]);
-                fprintf(f, "    ");
-                fprintf(f, "%6.3f", Sched[i][2]);
-                fprintf(f, "    ");
-		fprintf(f, "%4d/%02d/%02d-", SchedSYear, SchedSMonth, SchedSDay);
-		fprintf(f, "%02d:%02d:%06.3f", SchedSHour, SchedSMin, SchedSSec);
-                fprintf(f, " ");
-		fprintf(f, "%4d/%02d/%02d-", SchedFYear, SchedFMonth, SchedFDay);
-		fprintf(f, "%02d:%02d:%06.3f", SchedFHour, SchedFMin, SchedFSec);
-		fprintf(f, "\n");
-	    }
-            fclose(f);
-        }
+		inp.close();
+		SortAcess(Access, TotalNumAll, AP); // 对时间窗口数据按结束时间最小进行由小到大排序
+		double ** Sched;
+		Sched = new double*[TotalNumAll];
+		for (int i = 0; i < TotalNumAll; i++)
+			Sched[i] = new double[6];
+		SchedNum = GreedySchedule(Nsat, Ntask, TotalNumAll, Access, Sched);
+		for (int i = 0; i < SchedNum; i++)
+		{
+			CalDat((Mjd_UTC + (Step*Sched[i][3]) / 86400.0), SchedSYear, SchedSMonth, SchedSDay, SchedSHour, SchedSMin, SchedSSec);
+			CalDat((Mjd_UTC + (Step*Sched[i][4]) / 86400.0), SchedFYear, SchedFMonth, SchedFDay, SchedFHour, SchedFMin, SchedFSec);
+			cout << "Task " << Sched[i][0] << " is executed by satellite " << Sched[i][1] << ",and its swayangle is " << Sched[i][2];
+			cout << ".StratTime is ";
+			printf("%4d/%02d/%02d-", SchedSYear, SchedSMonth, SchedSDay);
+			printf("%02d:%02d:%06.3f", SchedSHour, SchedSMin, SchedSSec);
+			cout << ",EndTime is ";
+			printf("%4d/%02d/%02d-", SchedFYear, SchedFMonth, SchedFDay);
+			printf("%02d:%02d:%06.3f", SchedFHour, SchedFMin, SchedFSec);
+			cout << "." << endl;
+			// 输出最终结果到result
+			fprintf(f, "%4d", (int)Sched[i][0]); //输出任务、卫星、角度
+			fprintf(f, " ");
+			fprintf(f, "%4d", (int)Sched[i][1]);
+			fprintf(f, "    ");
+			fprintf(f, "%6.3f", Sched[i][2]);
+			fprintf(f, "    ");
+			fprintf(f, "%4d/%02d/%02d-", SchedSYear, SchedSMonth, SchedSDay);
+			fprintf(f, "%02d:%02d:%06.3f", SchedSHour, SchedSMin, SchedSSec);
+			fprintf(f, " ");
+			fprintf(f, "%4d/%02d/%02d-", SchedFYear, SchedFMonth, SchedFDay);
+			fprintf(f, "%02d:%02d:%06.3f", SchedFHour, SchedFMin, SchedFSec);
+			fprintf(f, "\n");
+		}
+		fclose(f);
+	}
 		
 
-        if (AP == AreaNtask) //单个区域目标任务
-{
-	//输出区域目标规划的结果
-	if ((f = fopen("result_area.txt", "w+")) == NULL)
+	if (AP == AreaNtask) //单个区域目标任务
 	{
-		fprintf(stdin, "Can't open \"words\" file.\n");
-		exit(1);
-	}
-	
-        cout << "AreaTargets plan:" << endl;
-	//计算备选条带总覆盖面积
-	int StripNum, StripNumMod;
-	int AccessTotalNumAllMod = 0;
-	double CovArea, AreaArea, CovRatio;
-	AreaArea = CalculateAreaNew(TargetArea); //计算观测区域面积
-	vector<vector<Point>> StripSet(TotalNumAll);
-	vector<vector<Point>> StripSetIn(TotalNumAll);
-	vector<vector<Point>> StripSetMod; //去掉观测面积较小的条带
-	vector<vector<Point>> StripSetPar; //部分条带
-	for (int i = 0; i < StripSet.size(); i++)
-		StripSet[i].resize(4);
-	double ** AccessMod; //去掉观测面积较小的时间窗口
-	for (int i = 0; i < TotalNumAll; i++)
-		Access[i] = new double[14];
-	AccessMod = new double*[TotalNumAll];
-	for (int i = 0; i < TotalNumAll; i++)
-		AccessMod[i] = new double[14];
-	inp.open("AccessAreaAll.txt"); //读取Access数据
-        cout << "All the TimeWindow data:" << endl;
-        cout << "TaskID " << "SatID " << "Swayangle " << "StartTime" << "EndTime " << "Duration " << "CoveargeBoundary" << endl;
-	for (int i = 0; i < TotalNumAll; i++)
-	{
-		for (int j = 0; j < 14; j++)
+		//输出区域目标规划的结果
+		if ((f = fopen("result_area.txt", "w+")) == NULL)
 		{
-			inp >> temp;
-			Access[i][j] = temp;
-			cout << Access[i][j] << " ";
+			fprintf(stdin, "Can't open \"words\" file.\n");
+			exit(1);
 		}
+		
+			cout << "AreaTargets plan:" << endl;
+		//计算备选条带总覆盖面积
+		int StripNum, StripNumMod;
+		int AccessTotalNumAllMod = 0;
+		double CovArea, AreaArea, CovRatio;
+		AreaArea = CalculateAreaNew(TargetArea); //计算观测区域面积
+		vector<vector<Point>> StripSet(TotalNumAll);
+		vector<vector<Point>> StripSetIn(TotalNumAll);
+		vector<vector<Point>> StripSetMod; //去掉观测面积较小的条带
+		vector<vector<Point>> StripSetPar; //部分条带
+		for (int i = 0; i < StripSet.size(); i++)
+			StripSet[i].resize(4);
+		double ** AccessMod; //去掉观测面积较小的时间窗口
+		for (int i = 0; i < TotalNumAll; i++)
+			Access[i] = new double[14];
+		AccessMod = new double*[TotalNumAll];
+		for (int i = 0; i < TotalNumAll; i++)
+			AccessMod[i] = new double[14];
+		inp.open("AccessAreaAll.txt"); //读取Access数据
+			cout << "All the TimeWindow data:" << endl;
+			cout << "TaskID " << "SatID " << "Swayangle " << "StartTime" << "EndTime " << "Duration " << "CoveargeBoundary" << endl;
+		for (int i = 0; i < TotalNumAll; i++)
+		{
+			for (int j = 0; j < 14; j++)
+			{
+				inp >> temp;
+				Access[i][j] = temp;
+				cout << Access[i][j] << " ";
+			}
+			cout << endl;
+		}
+		inp.close();
+		SortAcess(Access, TotalNumAll, AP); //根据结束时间最早进行排序
+		//for (int i = 0; i < TotalNumAll; i++)
+		//{
+			//cout << Access[i][1] << endl;
+		//}
+		for (int i = 0; i < TotalNumAll; i++)
+			for (int j = 0; j < 8; j=j+2){
+				StripSet[i][j/2].x = Access[i][j + 7]; //lon
+				StripSet[i][j/2].y = Access[i][j + 6]; //lat
+			}
+		StripNum = StripSet.size();
+		for (int i = 0; i < StripNum; i++){
+			vector<Point> tempIn; //在循环里初始化，避免坐标累计
+			StripSetIn[i] = PolygonClip(StripSet[i], TargetArea, tempIn); //求每个条带对于观测区域覆盖的面积
+			if (CalculateAreaNew(StripSetIn[i]) > 0.1*AreaArea) //条带面积小于观测区域的10%时，放弃该次观测
+			{
+				StripSetMod.push_back(StripSetIn[i]);
+				for (int k = 0; k < 14; k++)
+					AccessMod[AccessTotalNumAllMod][k] = Access[i][k];
+				AccessTotalNumAllMod++;
+					
+			}	
+		}
+		StripNumMod = StripSetMod.size();
+		for (int i = 0; i < StripNumMod; i++)
+		{
+			StripSetPar.push_back(StripSetMod[i]);
+			CovArea = StripTotalCoverage(StripSetPar, i+1);
+			if (CovArea >= 0.8*AreaArea) //当条带集合覆盖总面积大于观测区域面积的80%时，认为区域被观测完成
+			{
+				SchedNum = i + 1; //记录使用的时间窗口数
+				break;
+			}
+			else
+				SchedNum++;
+		}
+		if (CovArea > AreaArea)
+			CovRatio = AreaArea;
+		CovRatio = CovArea / AreaArea;
 		cout << endl;
-	}
-	inp.close();
-	SortAcess(Access, TotalNumAll, AP); //根据结束时间最早进行排序
-	//for (int i = 0; i < TotalNumAll; i++)
-	//{
-		//cout << Access[i][1] << endl;
-	//}
-	for (int i = 0; i < TotalNumAll; i++)
-		for (int j = 0; j < 8; j=j+2)
-		{
-			StripSet[i][j/2].x = Access[i][j + 7]; //lon
-			StripSet[i][j/2].y = Access[i][j + 6]; //lat
-		}
-	StripNum = StripSet.size();
-	for (int i = 0; i < StripNum; i++)
-	{
-		vector<Point> tempIn; //在循环里初始化，避免坐标累计
-		StripSetIn[i] = PolygonClip(StripSet[i], TargetArea, tempIn); //求每个条带对于观测区域覆盖的面积
-		if (CalculateAreaNew(StripSetIn[i]) > 0.1*AreaArea) //条带面积小于观测区域的10%时，放弃该次观测
-		{
-			StripSetMod.push_back(StripSetIn[i]);
-			for (int k = 0; k < 14; k++)
-				AccessMod[AccessTotalNumAllMod][k] = Access[i][k];
-			AccessTotalNumAllMod++;
-				
-		}	
-	}
-	StripNumMod = StripSetMod.size();
-	for (int i = 0; i < StripNumMod; i++)
-	{
-		StripSetPar.push_back(StripSetMod[i]);
-		CovArea = StripTotalCoverage(StripSetPar, i+1);
-		if (CovArea >= 0.8*AreaArea) //当条带集合覆盖总面积大于观测区域面积的80%时，认为区域被观测完成
-		{
-			SchedNum = i + 1; //记录使用的时间窗口数
-			break;
-		}
-		else
-			SchedNum++;
-	}
-	if (CovArea > AreaArea)
-		CovRatio = AreaArea;
-	CovRatio = CovArea / AreaArea;
-	cout << endl;
-	cout << "Total coverarge area is " << CovArea << "km^2,and the coverage ratio is " << CovRatio << "." << endl;
-	fprintf(f, "totalcoverarea  totalcoverratio");
-	fprintf(f, "\n");
-	fprintf(f, "%10.3f", CovArea);
-	fprintf(f, "      ");
-	fprintf(f, "%6.5f", CovRatio);
-	fprintf(f, "\n");
-	fprintf(f, "task  sat  slewangle    starttime      finishtime");
-        fprintf(f, "\n");
-	for (int i = 0; i < SchedNum; i++)
-	{
-		CalDat((Mjd_UTC + (Step*AccessMod[i][3]) / 86400.0), SchedSYear, SchedSMonth, SchedSDay, SchedSHour, SchedSMin, SchedSSec);
-		CalDat((Mjd_UTC + (Step*AccessMod[i][4]) / 86400.0), SchedFYear, SchedFMonth, SchedFDay, SchedFHour, SchedFMin, SchedFSec);
-		cout << "Task " << AccessMod[i][0] << " is executed by satellite " << AccessMod[i][1] << ",and its swayangle is " << AccessMod[i][2];
-		cout << ".StratTime is ";
-		printf("%4d/%02d/%02d-", SchedSYear, SchedSMonth, SchedSDay);
-		printf("%02d:%02d:%06.3f", SchedSHour, SchedSMin, SchedSSec);
-		cout << ",EndTime is ";
-		printf("%4d/%02d/%02d-", SchedFYear, SchedFMonth, SchedFDay);
-		printf("%02d:%02d:%06.3f", SchedFHour, SchedFMin, SchedFSec);
-		cout << "." << endl;
-		// 输出最终结果到result
-		fprintf(f, "%4d", (int)AccessMod[i][0]); //输出任务、卫星、角度
-                fprintf(f, " ");
-                fprintf(f, "%4d", (int)AccessMod[i][1]);
-                fprintf(f, "    ");
-                fprintf(f, "%6.3f", AccessMod[i][2]);
-                fprintf(f, "   ");
-		fprintf(f, "%4d/%02d/%02d-", SchedSYear, SchedSMonth, SchedSDay);
-		fprintf(f, "%02d:%02d:%06.3f", SchedSHour, SchedSMin, SchedSSec);
-                fprintf(f, " ");
-		fprintf(f, "%4d/%02d/%02d-", SchedFYear, SchedFMonth, SchedFDay);
-		fprintf(f, "%02d:%02d:%06.3f", SchedFHour, SchedFMin, SchedFSec);
+		cout << "Total coverarge area is " << CovArea << "km^2,and the coverage ratio is " << CovRatio << "." << endl;
+		fprintf(f, "totalcoverarea  totalcoverratio");
 		fprintf(f, "\n");
+		fprintf(f, "%10.3f", CovArea);
+		fprintf(f, "      ");
+		fprintf(f, "%6.5f", CovRatio);
+		fprintf(f, "\n");
+		fprintf(f, "task  sat  slewangle    starttime      finishtime");
+		fprintf(f, "\n");
+		for (int i = 0; i < SchedNum; i++)
+		{
+			CalDat((Mjd_UTC + (Step*AccessMod[i][3]) / 86400.0), SchedSYear, SchedSMonth, SchedSDay, SchedSHour, SchedSMin, SchedSSec);
+			CalDat((Mjd_UTC + (Step*AccessMod[i][4]) / 86400.0), SchedFYear, SchedFMonth, SchedFDay, SchedFHour, SchedFMin, SchedFSec);
+			cout << "Task " << AccessMod[i][0] << " is executed by satellite " << AccessMod[i][1] << ",and its swayangle is " << AccessMod[i][2];
+			cout << ".StratTime is ";
+			printf("%4d/%02d/%02d-", SchedSYear, SchedSMonth, SchedSDay);
+			printf("%02d:%02d:%06.3f", SchedSHour, SchedSMin, SchedSSec);
+			cout << ",EndTime is ";
+			printf("%4d/%02d/%02d-", SchedFYear, SchedFMonth, SchedFDay);
+			printf("%02d:%02d:%06.3f", SchedFHour, SchedFMin, SchedFSec);
+			cout << "." << endl;
+			// 输出最终结果到result
+			fprintf(f, "%4d", (int)AccessMod[i][0]); //输出任务、卫星、角度
+			fprintf(f, " ");
+			fprintf(f, "%4d", (int)AccessMod[i][1]);
+			fprintf(f, "    ");
+			fprintf(f, "%6.3f", AccessMod[i][2]);
+			fprintf(f, "   ");
+			fprintf(f, "%4d/%02d/%02d-", SchedSYear, SchedSMonth, SchedSDay);
+			fprintf(f, "%02d:%02d:%06.3f", SchedSHour, SchedSMin, SchedSSec);
+			fprintf(f, " ");
+			fprintf(f, "%4d/%02d/%02d-", SchedFYear, SchedFMonth, SchedFDay);
+			fprintf(f, "%02d:%02d:%06.3f", SchedFHour, SchedFMin, SchedFSec);
+			fprintf(f, "\n");
+		}
+		fclose(f);
 	}
-        fclose(f);
-}
-        
+			
 	printf("\nPlan is finished,press any key to exit \n");
+	*/
 	getchar();
 	return 0;
 }

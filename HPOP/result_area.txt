@@ -1,4 +1,4 @@
-totalcoverarea    totalcoverratio
+totalcoverarea  totalcoverratio
  71312.444      0.92573
 task  sat  slewangle    starttime      finishtime
    0   87    36.729   2019/08/01-00:03:17.000 2019/08/01-00:04:09.000

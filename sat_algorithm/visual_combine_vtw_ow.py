@@ -9,6 +9,7 @@ mode = []
 with open("/home/gwj/genetic/sat_algorithm/time_windows_data.dat",'r') as f:
     lines = f.readlines()
 
+oceanic_colors = ['#8ED6FF', '#5D9CEC', '#265A84', '#48CFAD', '#16A085']
 # print(lines)
 for i in lines:
     tmp = i.strip('\n').split(',')
@@ -27,13 +28,13 @@ for i in range(len(vtws)):
     barh_param[1].append(vtws[i][1]-vtws[i][0])
     barh_param[2].append(0.8)
     barh_param[3].append(vtws[i][0])
-    barh_param[4].append('y')
+    barh_param[4].append(oceanic_colors[1])
 
     barh_param[0].append(c)
     barh_param[1].append(ows[i][1]-ows[i][0])
     barh_param[2].append(0.8)
     barh_param[3].append(ows[i][0])
-    barh_param[4].append('g')
+    barh_param[4].append(oceanic_colors[0])
 
     ticks_y.append(f"")
     ticks_y.append(f"Target no {i+1}")
@@ -76,7 +77,7 @@ for i in range(len(free_windows)):
     height=0.8,
     left=left_,
     align='center',
-    color = 'b',
+    color =oceanic_colors[2],
     label = label_
     )
 
@@ -115,13 +116,13 @@ for i in range(len(vtws)):
     barh_param[1].append(vtws[i][1]-vtws[i][0])
     barh_param[2].append(0.8)
     barh_param[3].append(vtws[i][0])
-    barh_param[4].append('y')
+    barh_param[4].append(oceanic_colors[1])
 
     barh_param[0].append(c)
     barh_param[1].append(ows[i][1]-ows[i][0])
     barh_param[2].append(0.8)
     barh_param[3].append(ows[i][0])
-    barh_param[4].append('g')
+    barh_param[4].append(oceanic_colors[0])
 
     ticks_y.append(f"")
     ticks_y.append(f"Target no {i+1}")

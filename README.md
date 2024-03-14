@@ -1,7 +1,9 @@
 <!-- translated on 2023.11.27 -->
 This is the Readme file for NSGA-II code.
 
-
+pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple pandas
+pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple scikit-learn
+pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple scipy
 About this version
 ==================
 基本上，这个版本是原始代码的“重构”版本，以使代码结构更具可移植性。已经做了一些改变:

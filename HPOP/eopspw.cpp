@@ -145,7 +145,7 @@ void initspw(spwdata spwarr[spwsize], double& jdspwstart)
 /* -----------------------------------------------------------------------------
 *
 *                           function initeop
-*
+*  
 *  this function initializes the earth orientation parameter data. the input
 *  data files are from celestrak and the eoppn.txt file contains the nutation
 *  daily values used for optimizing the speed of operation. note these nutation
