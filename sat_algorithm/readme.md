@@ -58,6 +58,9 @@ echo "Zx123456" | sudo -S git commit -m "拟合算法生成"
 
 echo "Zx123456" | sudo -S git add .
 echo "Zx123456" | sudo -S git commit -m "实现了切比雪夫轨道插值及预报算法"
+
+echo "Zx123456" | sudo -S git add .
+echo "Zx123456" | sudo -S git commit -m "优化了两种多项式拟合算法可视化功能"
 git push origin nsga-II
 ```
 
